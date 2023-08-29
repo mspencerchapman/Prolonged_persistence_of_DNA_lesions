@@ -2884,10 +2884,10 @@ add_var_col=function(tree, ##<< enhanced phylo returned from plot_tree
 
 
 
-highlight_nodes=function(tree,details,matrices,node,nodes,...) {
+highlight_nodes=function(tree,details,matrices,node,nodes,col="red",...) {
   info=get_edge_info(tree,details,node=node)
   if(node %in% nodes){
-    arrows(y0=info$yb,y1=info$yt,x0=info$x,x1=info$x,length=0,col="red",lend=1,...)
+    arrows(y0=info$yb,y1=info$yt,x0=info$x,x1=info$x,length=0,col=col,lend=1,...)
   }
 }
 
@@ -3243,7 +3243,7 @@ set_tree_coords=function(atree){
   atree
 }
 
-plot_tree=function(tree,direction="down",cex.label=5,offset=0,plot_axis=T,title=NULL,b_do_not_plot=FALSE,lwd=1,bars=NULL,default_edge_color="darkgrey",ymax=NULL,cex.terminal.dots=0,vspace.reserve=0,cex.axis=1){
+plot_tree=function(tree,direction="down",cex.label=5,offset=0,plot_axis=T,title=NULL,b_do_not_plot=FALSE,lwd=1,bars=NULL,default_edge_color="darkgrey",ymax=NULL,cex.terminal.dots=0,vspace.reserve=0,cex.axis=1,tck=-0.02){
   par(mar=c(1, 1, 1, 3) + 0.1)
   #browser()
   if(!(direction %in% c("down","across"))){
@@ -3310,7 +3310,7 @@ plot_tree=function(tree,direction="down",cex.label=5,offset=0,plot_axis=T,title=
   #browser()
   cat("scale=",scale,"\n")
   if(plot_axis){
-    axis(side = 4,at=seq(top,-scale,-scale),label=seq(0,top+scale,scale),las=2, cex.axis = cex.axis, lwd = 1, lwd.ticks = 1, col = "black") 
+    axis(side = 4,at=seq(top,-scale,-scale),label=seq(0,top+scale,scale),las=2, cex.axis = cex.axis, lwd = 1, lwd.ticks = 1, col = "black",tck=tck) 
   }
   if(!is.null(title)) {
     text(x = 0,y=ymax,pos = 4,labels = title)
@@ -4283,5 +4283,32 @@ calculate_cell_frac=function(NV,NR) {
   #Cell frac cannot be greater than 1, therefore if comes out as > 1 (which can happen when dividing the NR by 2), coerce to 1
   cell_frac[cell_frac>1]<-1
   return(cell_frac)
+}
+
+#Adjust the add_heatmap function to allow large heatmap under the tree
+add_mut_heatmap=function(tree,heatmap,heatvals=NULL,border="white",heatmap_bar_height=0.05,cex.label=2,label.cols=NA){
+  ymax=tree$ymax
+  idx=match(colnames(heatmap),tree$tip.label)
+  top=-0.01*ymax
+  gap=tree$vspace.reserve/dim(heatmap)[1]
+  labels=rownames(heatmap)
+  for(i in 1:dim(heatmap)[1]){
+    bot=top-heatmap_bar_height*ymax
+    #bot=top-(0.05/dim(heatmap)[1])*ymax
+    rect(xleft=idx-0.5,xright=idx+0.5,ybottom = bot,ytop=top,col = heatmap[i,],border=border,lwd = 0.25)
+    if(!is.null(heatvals)){
+      text(xx=idx,y=0.5*(top+bot),labels = sprintf("%3.2f",heatvals[i,]))
+    }
+    if(!is.null(labels)){
+      if(!is.na(label.cols[1])) {
+        text(labels[i],x=-0.5,y=0.5*(top+bot),pos = 2,cex = cex.label,col=label.cols[i])
+      } else {
+        text(labels[i],x=-0.5,y=0.5*(top+bot),pos = 2,cex = cex.label)
+      }
+      
+    }
+    top=bot
+  }
+  tree
 }
 

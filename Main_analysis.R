@@ -122,7 +122,7 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
   mutations$mut_profile_2=paste0(substr(mutations$trinuc_ref_py,1,1),"[",mutations$Sub2,"]",substr(mutations$trinuc_ref_py,3,3))
   
   #Add individual-level metadata
-  sample_ref=read.csv("Individual_ref.csv")
+  sample_ref=read.csv(paste0(data_dir,"Individual_ref.csv"))
   mutations$cat=sapply(mutations$Sample_ID,function(sample) return(sample_ref$Category[sample_ref$Sample_ID==sample]))
   mutations<-mutations%>%filter(data_set!="PR")
   
@@ -375,7 +375,7 @@ p.MAV.6<-multi_SNVs %>%
   dplyr::count(cat,mut_combination)%>%
   complete(cat,mut_combination,fill=list(n=0))%>%
   ggplot(aes(x=mut_combination,y=n,fill=mut_combination)) +
-  geom_bar(stat="identity",col="black",size=0.4) +
+  geom_bar(stat="identity",col="black",linewidth=0.4) +
   my_theme+
   facet_wrap(~cat,nrow = 2) +
   theme(axis.text.x = element_text(size=8,angle = 90))
@@ -437,7 +437,7 @@ plot_MAV_96profile=function(multi_SNV_table,cat_types=NULL,relative=F,return_vec
     ylab(ifelse(relative,"Relative contribution","Frequency"))+
     coord_cartesian(ylim = c(0, ymax))+
     scale_y_continuous(breaks = NULL) + 
-    guides(fill = FALSE)+
+    guides(fill = "none")+
     theme_bw()+
     theme(axis.title.y = element_text(size = 8,vjust = 1),
           axis.text.y = element_text(size = 8),
@@ -468,6 +468,25 @@ p.MAV.8.2<-plot_MAV_96profile(multi_SNV_table = multi_SNVs,cat_types="Bronchial"
 p.MAV.8.3<-plot_MAV_96profile(multi_SNV_table = multi_SNVs,cat_types="Chemo_HSPC",compressed=T)
 p.MAV.8.4<-plot_MAV_96profile(multi_SNV_table = multi_SNVs,cat_types="Adult_HSPC",compressed=T)
 p.MAV.8.4.2<-plot_MAV_96profile(multi_SNV_table = multi_SNVs,cat_types="Liver",compressed=T)
+
+#Now plot as traditional 96-profile signatures
+sub_vec = c("C>A","C>G","C>T","T>A","T>C","T>G"); ctx_pre_vec=rep(c("A","C","G","T"),each=4);ctx_post_vec=rep(c("A","C","G","T"),times=4)
+full_vec = paste0(rep(ctx_pre_vec,times=6),"[",rep(sub_vec,each=16),"]",rep(ctx_post_vec,time=6))
+
+mut_mat_for_96profile<-multi_SNVs%>%
+  filter(cat!="Foetal_HSPC")%>%
+  dplyr::select(cat,mut_profile_1,mut_profile_2)%>%
+  gather(-cat,key="mut",value = "profile")%>%
+  group_by(cat,profile)%>%
+  summarise(n=n())%>%
+  pivot_wider(names_from = "cat",values_from = "n",values_fill = 0)
+
+mut_mat_for_96profile<-data.frame(profile=full_vec)%>%
+  left_join(mut_mat_for_96profile)%>%
+  replace(is.na(.),0)%>%
+  tibble::column_to_rownames(var="profile")
+
+p.MAV.8.4.2<-plot_96_profile(mut_mat_for_96profile[,c("Bronchial","Liver","Adult_HSPC","Chemo_HSPC")],ymax=0.1)
 
 #'FAIL' MAV signature analysis
 multi_SNVs_fail<-MAV_mutations%>%
@@ -628,6 +647,25 @@ p.MAV.9.7<-summary_table_df_MAV%>%
        y="Number of MAVs per\npost-development node",
        col="Sample type",
        shape="Smoking status")
+
+#Do significance testing for differences in 'MAVs_per_node' statistic in different groups
+df_for_kruskal_testing<-summary_table_df_MAV%>%
+  mutate(MAVs_per_PDN=n_MAV/post_development_nodes)%>%
+  filter(cat!="Foetal_HSPC" & post_development_nodes>0)%>%
+  mutate(cat=factor(cat,levels=c("Adult_HSPC","Liver","Bronchial","Chemo_HSPC")))
+
+kruskal.test(x = df_for_kw_testing$MAVs_per_PDN,
+             g=df_for_kw_testing$cat)
+
+temp=df_for_kw_testing%>%
+  filter(cat=="Bronchial")%>%
+  mutate(smoking_status=ifelse(smoking_status%in%c("Never_smoker","Child"),"Never_smoker","Smoking_history"))%>%
+  left_join(sample_ref%>%dplyr::select(Sample_ID,Pack_years))%>%
+  mutate(Pack_years=replace_na(Pack_years,0))%>%
+  filter(Pack_years==0|Pack_years>=30) #Include only 'never smokers' or individual with at least 30 pack years
+
+kruskal.test(x=temp$MAVs_per_PDN,
+             g=temp$smoking_status)
 
 p.MAV.10.1<-MAV_mutations%>%
   mutate(Sample_ID=stringr::str_split(Sample_ID,pattern="_",simplify=T)[,1])%>%
