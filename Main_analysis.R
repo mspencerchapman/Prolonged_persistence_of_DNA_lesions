@@ -72,6 +72,7 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
   
   mutations<-read.delim(mutations_file)
   summary_table_df<-read.delim(summary_df_file)
+  sample_ref=read.csv(paste0(data_dir,"Individual_ref.csv"))
   
 } else {
   #Set data file paths
@@ -127,7 +128,6 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
   mutations<-mutations%>%filter(data_set!="PR")
   
   write.table(mutations,file=mutations_file,quote=F,sep="\t",row.names = F)
-  
   
   #Summary table
   summary_table_list=lapply(data_sets,function(data_set) {
@@ -224,9 +224,6 @@ p.MAV.0.1<-MAV_mutations%>%
   my_theme+
   labs(x="Number of negative\nsubclades",y="Number of mutations")
 
-#Now set these mutations with > 1 negative subclade to "FAIL"
-MAV_mutations%>%group_by(phasing_summary)%>%summarise(n_exclude=sum(n_neg>1 & Class=="removed"))
-MAV_mutations<-MAV_mutations%>%mutate(Class=ifelse(Class=="removed"&n_neg>1,"FAIL",Class))
 
 #Review the non-matching phasing mutations
 MAV_mutations%>%
@@ -284,7 +281,8 @@ p.MAV.3.1<-MAV_mutations%>%
   mutate(cat=stringr::str_replace(cat,pattern = "_",replacement = "\n"))%>%
   group_by(Class,phasing_summary)%>%
   dplyr::count(phasing_summary,cat)%>%
-  tidyr::complete(phasing_summary,cat,fill=list(n=0))%>%
+  ungroup()%>%
+  tidyr::complete(Class,phasing_summary,cat,fill=list(n=0))%>%
   filter(phasing_summary%in%c("Non-matching phasing confirmed","Same phasing confirmed"))%>%
   ggplot(aes(x=cat,y=n,fill=phasing_summary))+
   geom_bar(stat="identity",position="dodge",col="black",linewidth=0.2)+
@@ -299,16 +297,24 @@ p.MAV.3.2<-MAV_mutations%>%
   filter(data_set!="SN")%>%
   mutate(phasing_summary=factor(phasing_summary))%>%
   group_by(Class,phasing_summary)%>%
-  dplyr::count(phasing_summary)%>%
-  complete(phasing_summary,fill=list(n=0))%>%
+  dplyr::count(Class,phasing_summary)%>%
+  ungroup()%>%
+  complete(Class,phasing_summary,fill=list(n=0))%>%
   filter(phasing_summary%in%c("Non-matching phasing confirmed","Same phasing confirmed"))%>%
   ggplot(aes(x=Class,y=n,fill=phasing_summary))+
-  geom_bar(stat="identity",position="dodge",col="black",size=0.2)+
+  geom_bar(stat="identity",position="dodge",col="black",linewidth=0.2)+
   scale_fill_manual(name = "MAV_phasing",values = myPhasingColors,labels = function(x) str_wrap(x, width = 18))+
   theme_classic()+
   my_theme+
   labs(x="MAV Class",
        y="Number of mutations")
+
+#Now remove the non-matching phasing samples from the dataset
+#Now set these mutations with > 1 negative subclade to "FAIL"
+MAV_mutations%>%group_by(phasing_summary)%>%summarise(n_exclude=sum(n_neg>1 & Class=="removed"))
+MAV_mutations<-MAV_mutations%>%mutate(Class=ifelse(Class=="removed"&n_neg>1,"FAIL",Class))
+MAV_mutations<-MAV_mutations%>%mutate(Class=ifelse(phasing_summary=="Non-matching phasing confirmed","FAIL",Class))
+
 
 order=MAV_mutations%>%
   filter(cat=="Bronchial")%>%
@@ -387,7 +393,7 @@ p.MAV.7<-multi_SNVs %>%
   dplyr::count(Sample_ID,mut_combination)%>%
   complete(Sample_ID,mut_combination,fill=list(n=0))%>%
   ggplot(aes(x=mut_combination,y=n,fill=mut_combination)) +
-  geom_bar(stat="identity",col="black",size=0.4) +
+  geom_bar(stat="identity",col="black",linewidth=0.4) +
   my_theme+
   facet_wrap(~Sample_ID,nrow = 2) +
   theme(axis.text.x = element_text(size=8,angle = 90))
@@ -449,7 +455,7 @@ plot_MAV_96profile=function(multi_SNV_table,cat_types=NULL,relative=F,return_vec
           panel.spacing.x = unit(0.5,"lines"))
     
   if(compressed){
-    plot+theme(rect=element_rect(size=0.3),
+    plot+theme(rect=element_rect(linewidth=0.3),
                axis.title.y = element_text(size = 7,vjust = 1),
                axis.text.y = element_blank(),
                axis.ticks.x = element_blank(), 
@@ -486,7 +492,16 @@ mut_mat_for_96profile<-data.frame(profile=full_vec)%>%
   replace(is.na(.),0)%>%
   tibble::column_to_rownames(var="profile")
 
-p.MAV.8.4.2<-plot_96_profile(mut_mat_for_96profile[,c("Bronchial","Liver","Adult_HSPC","Chemo_HSPC")],ymax=0.1)
+p.MAV.8.4.3<-plot_96_profile(mut_mat_for_96profile[,c("Bronchial","Liver","Adult_HSPC","Chemo_HSPC")],ymax=0.1)+
+  theme_bw()+
+  theme(axis.title.y = element_text(size = 8,vjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_text(size = 8),
+        axis.text.x = element_text(size = 5, angle = 90, vjust = 0.5),
+        strip.text.x = element_text(size = 7),
+        strip.text.y = element_text(size = 7),
+        panel.grid.major.x = element_blank(),
+        panel.spacing.x = unit(0.5,"lines"))
 
 #'FAIL' MAV signature analysis
 multi_SNVs_fail<-MAV_mutations%>%
@@ -714,6 +729,7 @@ if(resave_plots){
   ggsave(p.MAV.8.2,filename=paste0(plots_dir,"MAV_signature_bronchial.pdf"),width=7,height=2)
   ggsave(p.MAV.8.3,filename=paste0(plots_dir,"MAV_signature_chemo.pdf"),width=3,height=1.2)
   ggsave(p.MAV.8.4,filename=paste0(plots_dir,"MAV_signature_adult.pdf"),width=3,height=1.2)
+  ggsave(p.MAV.8.4.3,filename=paste0(plots_dir,"MAV_traditionl_96signature_adult.pdf"),width=7,height=4)
   ggsave(p.MAV.8.5,filename=paste0(plots_dir,"MAV_fail_signature_all.pdf"),width=7,height=4)
   ggsave(p.MAV.9.1,filename=paste0(plots_dir,"MAV_numbers_by_PDN.pdf"),width=4,height=2)
   ggsave(p.MAV.9.2,filename=paste0(plots_dir,"MAV_numbers_by_PDN_AdultHSPC.pdf"),width=2,height=2)
@@ -789,7 +805,7 @@ write.vcf(FAIL_PVVs,vcf_path = "Blood_fail_PVVs.vcf",vcf_header_path = "/lustre/
 
 #Introduce a more stringent threshold for the minimum depth of the negative subclade - needs to be at least ≥13 (not 10 as previously). This loses
 PVV_mutations$max_neg_clade_depth=sapply(PVV_mutations$depth_per_negative_subclade,function(x) max(as.numeric(unlist(strsplit(x,split=",")))))
-PVV_mutations<-PVV_mutations%>%filter(max_neg_clade_depth>12|is.na(max_neg_clade_depth))
+PVV_mutations<-PVV_mutations%>%mutate(Class=ifelse(max_neg_clade_depth<13|is.na(max_neg_clade_depth)|is.na(lesion_node),"FAIL",Class))
 
 p.PVV.1.1<-PVV_mutations%>%
   mutate(ASCAT_result=factor(ASCAT_result))%>%filter(Class!="FAIL")%>%
@@ -864,7 +880,7 @@ p.PVV.2<-PVV_mutations%>%
   mutate(PVV_pos_clade_phasing=factor(PVV_pos_clade_phasing))%>%filter(Class!="FAIL")%>%
   group_by(Class,PVV_pos_clade_phasing)%>%
   dplyr::count(PVV_pos_clade_phasing)%>%
-  complete(PVV_pos_clade_phasing,fill=list(n=0))%>%
+  tidyr::complete(PVV_pos_clade_phasing,fill=list(n=0))%>%
   filter(PVV_pos_clade_phasing%in%c("Non-matching phasing confirmed","Same phasing confirmed"))%>%
   ggplot(aes(x=Class,y=n,fill=PVV_pos_clade_phasing))+
   geom_bar(stat="identity",position="dodge",col=NA,size=0.2)+
@@ -927,7 +943,8 @@ ggsave(p.PVV.3.1,filename = paste0(plots_dir,"PVV_no_of_divisions.pdf"),width = 
 
 #REMOVE THE MUTATIONS FROM OTHER MECHANISMS FOR DOWNSTREAM ANALYSIS (i.e. signatures etc.)
 #Note that some "non-genuine" PVVs (by a variety of mechanisms) will still remain as not all individual mutations were assessable
-PVV_mutations<-PVV_mutations%>%filter(Class!="FAIL" & ASCAT_result!="LOH"& basic_result!="LOH" & PVV_pos_clade_phasing!="Non-matching phasing confirmed"&no_of_cell_divisions<=6)
+PVV_mutations<-PVV_mutations%>%mutate(Class=ifelse(ASCAT_result!="LOH"& basic_result!="LOH" & PVV_pos_clade_phasing!="Non-matching phasing confirmed"&no_of_cell_divisions<=6,Class,"FAIL"))
+PVV_mutations<-PVV_mutations%>%filter(Class!="FAIL")
 
 #Or select only those that most stringently are not excluded
 #PVV_mutations<-PVV_mutations%>%filter(Class!="FAIL" & ASCAT_result=="No LOH"& basic_result=="No LOH" & PVV_pos_clade_phasing=="Same phasing confirmed")
@@ -1455,100 +1472,4 @@ ggsave(p2,filename = paste0(figures_dir,"PVVs_simple_signature.pdf"),device=cair
 ggsave(p3,filename = paste0(figures_dir,"MAV_signatures_by_category.pdf"),device=cairo_pdf,width = 140,height = 50,units = "mm")
 ggsave(arrangeGrob(p4.1,p4.2,ncol=1),filename = paste0(figures_dir,"Molecular_lesion_durations.pdf"),device=cairo_pdf,width = 140,height = 100,units = "mm")
 ggsave(p5,filename = paste0(figures_dir,"Minimum_cell_divisions.pdf"),device=cairo_pdf,width = 140,height = 70,units = "mm")
-
-#Review of lesion nodes on the tree
-pdf("Affected_MAV_nodes_on_tree.pdf",width=15,height=10)
-sapply(MAV_mutations%>%filter(Class!="FAIL")%>%pull(Sample_ID)%>%unique(), function(sampleID) {
-  data_set=MAV_mutations%>%filter(Sample_ID==sampleID)%>%pull(data_set)%>%unique()
-  sample_info=get_file_paths_and_project(dataset = data_set,Sample_ID=sampleID)
-  tree=read.tree(sample_info$tree_file_path)
-  node_vec=MAV_mutations%>%filter(Sample_ID==sampleID & Class!="FAIL")%>%pull(lesion_node)
-
-  tree=plot_tree(tree,cex.label = 0) #Here need to make sure that have the correct
-  add_annotation(tree,
-                 details,
-                 matrices = NULL,
-                 annot_function = function(tree=tree,details=details,matrices=matries,node,node_vec=node_vec){
-                   if(sum(node_vec==node)>0){
-                     n_node=base::table(node_vec)[as.character(node)]
-                     radius=sqrt(n_node)
-                     info=get_edge_info(tree,details,node)
-                     plotrix::draw.circle(info$x,info$yb,radius = radius,col="red",density=50)
-                   }
-                 },
-                 node_vec=node_vec)
-})
-dev.off()
-
-
-#CONFIRM THE PHYLOGENIES BY LOOKING AT THE MUTATIONS CONFIRMING THE STRUCTURE
-confirm_phylogeny=lapply(data_sets, function(dataset) {
-  dataset="EM"
-  phasing_output_dir=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/phasing_output/",dataset)
-  data_set_PVVs<-mutations%>%filter(Type=="PVV" & data_set==dataset)
-  Sample_IDs=unique(data_set_PVVs$Sample_ID)
-  
-  data_set_out=lapply(Sample_IDs,function(sample) {
-    print(paste("Starting analysis for sample",sample))
-    data_set_sample_PVVs=data_set_PVVs%>%dplyr::filter(Sample_ID==sample)
-    
-    #Find the relevant project and tree file
-    sample_info=get_file_paths_and_project(dataset,Sample_ID=sample)
-    tree_curr=read.tree(sample_info$tree_file_path)
-    load(sample_info$filtered_muts_path)
-    details=filtered_muts$COMB_mats.tree.build$mat
-    matrices=list(NV=filtered_muts$COMB_mats.tree.build$NV,NR=filtered_muts$COMB_mats.tree.build$NR)
-    
-    if(any(data_set_sample_PVVs$Mut_type1=="MNV")){
-      print("Reclassifying the MNVs")
-      filtered_muts$COMB_mats.tree.build=reclassify_MNVs(COMB_mats = filtered_muts$COMB_mats.tree.build,genomeFile = genome_file)
-      details=filtered_muts$COMB_mats.tree.build$mat
-      matrices=list(NV=filtered_muts$COMB_mats.tree.build$NV,NR=filtered_muts$COMB_mats.tree.build$NR) 
-    }
-    pdf(paste0(output_dir,"/",sample,"_confirm_PVVs.pdf"),width=20,height=6)
-    sample_out=lapply(1:nrow(data_set_sample_PVVs),function(i) {
-      print(i)
-      Chrom=str_split(data_set_sample_PVVs$Chrom_pos[i],pattern = "-",simplify=T)[,1]
-      mut=data_set_sample_PVVs$mut_ref1[i]
-      print(mut)
-      
-      Pos=as.numeric(str_split(data_set_sample_PVVs$Chrom_pos[i],pattern = "-",simplify=T)[,2])
-      Ref<-data_set_sample_PVVs$Ref[i]
-      Alt<-data_set_sample_PVVs$Alt1[i]
-      
-      if(is.na(data_set_sample_MAVs$lesion_node[i])) {stop(return("No lesion node"))}
-      
-      #Here to identify the mixed subclade & otherwise confirm the mutations that cause this phylogeny
-      mixed_subclade=get_mixed_subclades(mut1 = mut,lesion_node = data_set_sample_PVVs$lesion_node[i],tree=tree_curr,matrices=matrices)
-      print(mixed_subclade)
-      if(any(mixed_subclade=="More than one mixed subclade identified - indicative that not caused by a persistent DNA lesion")) {stop(return("More than one mixed subclade"))}
-      
-      clade_muts=details$mut_ref[details$node==mixed_subclade]
-      print(paste("There are",length(clade_muts),"mutations confirming this clade"))
-      
-      if(length(clade_muts)>5) {
-        to_visualize=sample(clade_muts,5)
-      } else {
-        to_visualize=clade_muts
-      }
-      
-      sapply(to_visualize,function(confirm_mut) {
-        tree_curr=plot_tree(tree_curr,cex.label = 0)
-        add_annotation(tree_curr,
-                       details=details,
-                       matrices=matrices,
-                       annot_function = confirm_PVV_phylogeny,
-                       mut=confirm_mut,
-                       PVV_mut=mut,
-                       lesion_node=data_set_sample_PVVs$lesion_node[i],
-                       lwd=2,
-                       cex=0.4)
-      })
-      return(length(clade_muts))
-    })
-    dev.off()
-    return(sample_out)
-  })
-  return(data_set_out)
-})
 

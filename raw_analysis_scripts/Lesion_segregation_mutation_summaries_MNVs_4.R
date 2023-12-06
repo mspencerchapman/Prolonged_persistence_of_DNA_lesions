@@ -41,36 +41,11 @@ MC_CORES=opt$c
 re_run=opt$r
 print(paste(MC_CORES,"cores available"))
 
-
-# sampleID="KX007_2_01"
-# tree_file_path=paste0("/lustre/scratch119/casm/team154pc/ms56/lesion_segregation/input_data/EM/tree_",sampleID,"_standard_rho01.tree")
-# filtered_muts_file=paste0("/lustre/scratch119/casm/team154pc/ms56/lesion_segregation/input_data/EM/annotated_mut_set_",sampleID,"_standard_rho01")
-# include_ancestral_tip=F
-# remove_duplicates=F
-# output_dir="."
-
 R_scripts_dir = "/lustre/scratch119/casm/team154pc/ms56/my_functions"
 treemut_dir="/lustre/scratch119/casm/team154pc/ms56/fetal_HSC/treemut"
 genome_file="/nfs/cancer_ref02/human/GRCh37d5/genome.fa"
 
 filter_output_df_file=paste0(output_dir,"/",sampleID,"_filter_df.tsv")
-
-# # ##Local file paths
-# my_working_directory = "~/R_work/Lesion_segregation/"
-
-# output_dir="~/R_work/Lesion_segregation/output/Emily_lesion_segregation_output/"
-# exp_ID="KX007_2_01"
-# tree_file_path=paste0("~/R_work/Emily_benchmarking/Emily_data/tree_",exp_ID,"_standard_rho01.tree")
-# filtered_muts_file=paste0("~/R_work/Emily_benchmarking/Emily_data/annotated_mut_set_",exp_ID,"_standard_rho01")
-# output_dir="~/R_work/Lesion_segregation/output/MF_output"
-# sampleID="PD41305"
-# tree_file_path="~/R_work/Lesion_segregation/Data_files/MF_data/tree_PD34493_FINAL_noMixed.tree"
-# filtered_muts_file="~/R_work/Lesion_segregation/Data_files/MF_data/filtered_muts_PD34493_FINAL_noMixed"
-# R_scripts_dir = "~/R_work/my_functions/"
-# treemut_dir="~/R_work/treemut/"
-# genome_file="~/Documents/Reference_files/genome.fa"
-# include_ancestral_tip=T
-# remove_duplicates=F
 
 #Import functions/ files
 setwd(my_working_directory)
