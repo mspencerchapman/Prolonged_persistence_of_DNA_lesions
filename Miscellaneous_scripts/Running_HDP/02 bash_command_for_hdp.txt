@@ -1,0 +1,13 @@
+#This is the code we use for submitting the hdp_single_chain.R script in parallel
+# You need to have run the 'HDP_input.R' script prior to this so that the trinucleotide contexts and key_table.txt files are in the directory
+#This is on an LSF farm; may need to alter depnding on your local compute farm setup
+#This typically takes ~1 hour
+
+
+ROOT_DIR="" #Set this to the location of the cloned github directory
+HDP_SINGLE_CHAIN_SCRIPT=${ROOT_DIR}/02\ Running_HDP_mutation_signature_extraction/hdp_single_chain.R
+MEM=10000 #May need more memory depending on the number of mutations
+
+for n in $(seq 1 20); do
+        bsub -o $PWD/log.%J -e $PWD/err.%J -q normal -R"select[mem>${MEM}] rusage[mem=${MEM}]" -M${MEM} -J HDP_${n} Rscript $HDP_SINGLE_CHAIN_SCRIPT $n
+done

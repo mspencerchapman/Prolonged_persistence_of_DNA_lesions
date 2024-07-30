@@ -759,7 +759,7 @@ assign_mutations_to_branches=function(tree,filtered_muts,keep_ancestral=T,create
 
 #Write a vcf file for reading into MutationalPatterns
 write.vcf=function(details,vcf_path,select_vector=NULL,vcf_header_path="~/Documents/vcfHeader.txt") {
-  if(class(details)=="character") {
+  if(any(class(details)=="character")) {
     mat=as.data.frame(stringr::str_split(details,pattern="-",simplify = T),stringsAsFactors=F)
     colnames(mat)<-c("Chrom","Pos","Ref","Alt")
     vcf=create_vcf_files(mat=mat,select_vector=select_vector)
@@ -811,7 +811,7 @@ get_node_types=function(lesion_children,mut_df,tree) {
 }
 
 #The function to assess all the mutations for whether they are phylogeny breaking
-create_PVV_filter_table=function(mutations_to_test,details,tree,matrices,look_back=3,remove_duplicates=F,duplicate_samples=NULL,MC_CORES=1) {
+create_PVV_filter_table=function(mutations_to_test,details,tree,matrices,look_back=3,type="standard",remove_duplicates=F,duplicate_samples=NULL,MC_CORES=1) {
   require(dplyr)
   require(parallel)
   print(paste("Assessing",length(mutations_to_test),"mutations for whether they are truly phylogeny breaking"))
@@ -820,11 +820,16 @@ create_PVV_filter_table=function(mutations_to_test,details,tree,matrices,look_ba
     all_clade_nodes=lapply(all_clades,function(node) c(node,get_all_node_children(node,tree)))
   }
   filter_output=mclapply(mutations_to_test,function(mut) {
-    if(which(mutations_to_test==mut)%%1000==0){print(which(mutations_to_test==mut))}
+    if(which(mutations_to_test==mut)%%10==0){print(which(mutations_to_test==mut))}
     allocated_node=details$node[details$mut_ref==mut]
     
     #Get counts of all individual clades within the allocated node i.e. those expected to be positive
-    positive_clades=get_all_node_children(allocated_node,tree)
+    if(allocated_node<=length(tree$tip.label)) {
+      positive_clades=allocated_node
+    } else {
+      positive_clades=get_all_node_children(allocated_node,tree)
+    }
+    
     if(remove_duplicates) {positive_clades=positive_clades[!positive_clades%in%duplicate_samples]} #don't assess duplicate samples as individual samples
     positive_clade_nodes=lapply(positive_clades,function(node) c(node,get_all_node_children(node,tree)))
     positive_clade_samples=lapply(positive_clade_nodes,function(nodes) return(tree$tip.label[nodes[nodes%in%1:length(tree$tip.label)]]))
@@ -869,7 +874,13 @@ create_PVV_filter_table=function(mutations_to_test,details,tree,matrices,look_ba
     
     #Additional filters to check not just for overdispersion, but that at least one clade unexpectedly truly negative or positive
     pos_test=any(NV_pos==0 & NR_pos>=10) #is there at least one "WT" sub-clade with zero variant reads with a depth of ≥ 10
-    neg_test=any((NV_neg/NR_neg)>=0.3 & NR_neg >=8) #is there at least one anticipated "negative" clade, that in fact has a VAF>0.3 with a depth ≥8
+    
+    if(type=="complete") {
+      neg_test=any((NV_neg/NR_neg)>=0.2 & NR_neg >=6) #is there at least one anticipated "negative" clade, that in fact has a VAF>0.3 with a depth ≥8
+    } else {
+      neg_test=any((NV_neg/NR_neg)>=0.3 & NR_neg >=8) #is there at least one anticipated "negative" clade, that in fact has a VAF>0.3 with a depth ≥8
+    }
+    
     
     mut_params=data.frame(mut=mut,
                           node=allocated_node,
@@ -1180,9 +1191,21 @@ extract_phasing_info=function(list,Ref,Alt) {
 #Function will look in the supplied output_dir to see if phasing output for given sample/Chrom/Pos already exists, if not will run the .jl script. Imports the data.
 #Run example: get_phasing_list(samples=positive_samples1,Chrom=Chrom,Pos=Pos,project=project,output_dir = phasing_output_dir,ref_sample_set = Ref_sample_set)
 
-get_phasing_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref_sample_set,distance=1000,force_rerun=F,verbose=F,use_tree=T) {
+get_phasing_list=function(samples,
+                          Chrom,
+                          Pos,
+                          project,
+                          tree=NULL,
+                          output_dir,
+                          ref_sample_set,
+                          distance=1000,
+                          force_rerun=F,
+                          verbose=F,
+                          use_tree=T,
+                          phasing_dir="/lustre/scratch126/casm/team154pc/ms56/my_programs/Mike_phasing/", #directory with the phasing scripts
+                          julia_path="/lustre/scratch126/casm/team154pc/ms56/my_programs/julia-1.1.0/bin/julia") {
   wd<-getwd()
-  setwd("/lustre/scratch126/casm/team154/ms56/my_programs/Mike_phasing") #Need to be in this directory for the function
+  setwd(phasing_dir) #Need to be in this directory for the function
   if(is.numeric(project)) {
     phasing_list=lapply(samples,function(sample) {
       phasing_output_file=paste0(output_dir,"/",sample,"_",Chrom,"_",Pos,"_phasing.txt")
@@ -1197,15 +1220,15 @@ get_phasing_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref_sam
             if(!file.exists(new_bam_path)) {
               print(paste("Importing bam file for",bam_sample,"and replacing header"))
               bam_path=paste0("/nfs/cancer_ref01/nst_links/live/",project,"/",bam_sample,"/",bam_sample,".sample.dupmarked.bam")
-              command=paste("julia header_edit.jl",bam_path,"offending_string.txt")
+              command=paste(julia_path,bam_path,"offending_string.txt")
               system(command)
             }
           })
           #Now run using the modified julia script to use these local files
-          command=paste("julia DRIVER_phasing_specify_BAM_directory.jl",Chrom,Pos,sample,"/lustre/scratch126/casm/team154pc/ms56/my_programs/Mike_phasing/new_bams",as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
+          command=paste(julia_path,"DRIVER_phasing_specify_BAM_directory.jl",Chrom,Pos,sample,paste0(phasing_dir,"new_bams"),as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
           system(command) 
         } else {
-          command=paste("julia DRIVER_phasing.jl",Chrom,Pos,sample,project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
+          command=paste(julia_path,"DRIVER_phasing.jl",Chrom,Pos,sample,project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
           system(command) 
         }
       } else if(verbose) {
@@ -1236,7 +1259,7 @@ get_phasing_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref_sam
       if(verbose) {print(paste("Ref sample set chosen as",ref_sample_set))}
       
       if(!file.exists(phasing_output_file)|file.info(phasing_output_file)$size==0|force_rerun) {
-        command=paste("julia DRIVER_phasing.jl",Chrom,Pos,sample,sample_project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
+        command=paste(julia_path,"DRIVER_phasing.jl",Chrom,Pos,sample,sample_project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
         system(command)
       } else if(verbose) {
         print("Existing phasing files found in specified output directory")
@@ -1254,7 +1277,18 @@ get_phasing_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref_sam
 }
 
 
-get_base_counts_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref_sample_set,distance=1000,force_rerun=F,verbose=F,use_tree=T) {
+get_base_counts_list=function(samples,
+                              Chrom,
+                              Pos,
+                              project,
+                              tree=NULL,
+                              output_dir,
+                              ref_sample_set,
+                              distance=1000,
+                              force_rerun=F,
+                              verbose=F,
+                              use_tree=T,
+                              julia_path="/lustre/scratch126/casm/team154pc/ms56/my_programs/julia-1.1.0/bin/julia") {
   wd<-getwd()
   setwd("/lustre/scratch126/casm/team154/ms56/my_programs/Mike_phasing") #Need to be in this directory for the function
   if(is.numeric(project)) {
@@ -1270,15 +1304,15 @@ get_base_counts_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref
             if(!file.exists(new_bam_path)) {
               print(paste("Importing bam file for",bam_sample,"and replacing header"))
               bam_path=paste0("/nfs/cancer_ref01/nst_links/live/",project,"/",bam_sample,"/",bam_sample,".sample.dupmarked.bam")
-              command=paste("julia header_edit.jl",bam_path,"offending_string.txt")
+              command=paste(julia_path,"header_edit.jl",bam_path,"offending_string.txt")
               system(command)
             }
           })
           #Now run using the modified julia script to use these local files
-          command=paste("julia DRIVER_phasing_specify_BAM_directory.jl",Chrom,Pos,sample,"/lustre/scratch126/casm/team154pc/ms56/my_programs/Mike_phasing/new_bams",as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
+          command=paste(julia_path,"DRIVER_phasing_specify_BAM_directory.jl",Chrom,Pos,sample,"/lustre/scratch126/casm/team154pc/ms56/my_programs/Mike_phasing/new_bams",as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
           system(command) 
         } else {
-          command=paste("julia DRIVER_phasing.jl",Chrom,Pos,sample,project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
+          command=paste(julia_path,"DRIVER_phasing.jl",Chrom,Pos,sample,project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
           system(command) 
         }
       } else if(verbose) {
@@ -1307,7 +1341,7 @@ get_base_counts_list=function(samples,Chrom,Pos,project,tree=NULL,output_dir,ref
       }
       if(verbose) {print(paste("Ref sample set chosen as",ref_sample_set))}
       if(!file.exists(basects_output_file)|file.info(basects_output_file)$size==0|force_rerun) {
-        command=paste("julia DRIVER_phasing.jl",Chrom,Pos,sample,sample_project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
+        command=paste(julia_path,"DRIVER_phasing.jl",Chrom,Pos,sample,sample_project,as.character(distance),phasing_output_file,basects_output_file,ref_sample_set)
         system(command)
       } else if(verbose) {
         print("Existing base counts files found in specified output directory")
@@ -1625,23 +1659,23 @@ get_mixed_subclades=function(mut1,mut2=NULL,lesion_node,tree,matrices) {
   }
 }
 
-get_file_paths_and_project=function(dataset,Sample_ID) {
+get_file_paths_and_project=function(dataset,Sample_ID,input_data_dir="/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/") {
   if(dataset=="MSC_fetal") {
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/Tree_",Sample_ID,".tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/Filtered_mut_set_annotated_",Sample_ID)
-    project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/MSC_BMT/Samples_project_reference.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/Tree_",Sample_ID,".tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/Filtered_mut_set_annotated_",Sample_ID)
+    project=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project<-project[,c("Sample","Project")]
     colnames(project)<-c("sample","project")
     sex=NA
   } else if(dataset=="EM") {
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,"_standard_rho01.tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/annotated_mut_set_",Sample_ID,"_standard_rho01")
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,"_standard_rho01.tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/annotated_mut_set_",Sample_ID,"_standard_rho01")
     if(grepl("PD45534|KX004",Sample_ID)) {
-      project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/EM/KX004_project_reference.csv",header=T)
+      project=read.csv(paste0(input_data_dir,"/EM/KX004_project_reference.csv"),header=T)
       project<-project[,c("Sample","Project")]
       colnames(project)<-c("sample","project")
     } else {
-      project_ref=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/EM/Samples_project_ref.csv",header=T)
+      project_ref=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
       project_ref<-project_ref[,c(1,3)]
       colnames(project_ref)<-c("sample","project")
       sample=substr(Sample_ID,1,5)
@@ -1650,53 +1684,53 @@ get_file_paths_and_project=function(dataset,Sample_ID) {
     
     sex=NA
   } else if(dataset=="KY") {
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/",Sample_ID,"_rmix_consense_tree_no_branch_lengths_1811.tree") 
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/Filtered_muts_",Sample_ID)
-    project_ref=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/KY/Samples_project_ref_KY.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/",Sample_ID,"_rmix_consense_tree_no_branch_lengths_1811.tree") 
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/Filtered_muts_",Sample_ID)
+    project_ref=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project=as.numeric(project_ref$project[project_ref$sample==Sample_ID])
     sex=NA
   } else if(dataset=="MSC_BMT") {
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,"_m40_postMS_reduced_a_j_pval_post_mix.tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/annotated_mut_set_",Sample_ID,"_m40_postMS_reduced_a_j_pval_post_mix")
-    project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/MSC_BMT/Samples_project_reference.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,"_m40_postMS_reduced_a_j_pval_post_mix.tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/annotated_mut_set_",Sample_ID,"_m40_postMS_reduced_a_j_pval_post_mix")
+    project=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project<-project[,c("Sample","Project")]
     colnames(project)<-c("sample","project")
     sex_vec=c(Pair11="male",Pair13="male",Pair21="male",Pair28="female",Pair31="male",Pair40="male")
     sex=sex_vec[Sample_ID]
   } else if(dataset=="PR") {
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/",Sample_ID,"/snp_tree_with_branch_length_polytomised.tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/",Sample_ID,"/Filtered_muts_",Sample_ID)
-    project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/PR/Samples_project_ref_PR.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/",Sample_ID,"/snp_tree_with_branch_length_polytomised.tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/",Sample_ID,"/Filtered_muts_",Sample_ID)
+    project=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project<-project[,c("sample","project")]
     sex=NA
   } else if(dataset=="MF"){
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,"_noMixed.tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/filtered_muts_",Sample_ID,"_noMixed")
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,"_noMixed.tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/annotated_mut_set_",Sample_ID,"_pval")
     project=2305
     sex=NA
   } else if(dataset=="NW"){
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,".tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/filtered_muts_",Sample_ID)
-    project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/NW/Samples_project_ref_NW.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,".tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/filtered_muts_",Sample_ID)
+    project=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project<-project[,c("Sample","Project")]
     colnames(project)<-c("sample","project")
     sex=NA
   } else if(dataset=="SN"){
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,".tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/Filtered_muts_",Sample_ID)
-    project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/SN/Samples_project_ref_SN.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,".tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/Filtered_muts_",Sample_ID)
+    project=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project<-project[,c("sample","project")]
     colnames(project)<-c("sample","project")
     sex=NA
   } else if(dataset=="MSC_chemo"){
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix.tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/annotated_mut_set_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix")
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix.tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/annotated_mut_set_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix")
     project=1805
     sex="female"
   } else if(dataset=="DK"){
-    tree_file_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/tree_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix.tree")
-    filtered_muts_path=paste0("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/",dataset,"/annotated_mut_set_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix")
-    project=read.csv("/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data/DK/Samples_project_ref_DK.csv",header=T)
+    tree_file_path=paste0(input_data_dir,"/",dataset,"/tree_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix.tree")
+    filtered_muts_path=paste0(input_data_dir,"/",dataset,"/annotated_mut_set_",Sample_ID,"_m40_postMS_reduced_a_j_vaf_post_mix")
+    project=read.csv(paste0(input_data_dir,"/",dataset,"/Samples_project_ref_",dataset,".csv"),header=T)
     project<-project[,c("Sample","Project")]
     colnames(project)<-c("sample","project")
     sex=NA
@@ -3006,7 +3040,7 @@ plot_MAV_mut=function(tree,
                       lesion_node=NA,
                       mut1,
                       mut2=NULL,
-                      colours=c("dark gray","red","blue"),
+                      colours=c("darkgray","#B3262A","#008BCE"),
                       cex=0.4,
                       #show_pval=FALSE,
                       ...) {
@@ -3057,9 +3091,9 @@ plot_MAV_mut=function(tree,
   #Print the mutation name
   if(node==1) { #Do for node==1 so that only prints the name once
     if(is.null(mut2)) {
-      text(1,1,pos=4,mut1)
+      text(1,1.025*max(tree$coords$a1),pos=4,mut1)
     } else {
-      text(1,1,pos=4,paste0(mut1,"/",strsplit(x=mut2,split="-")[[1]][4]))
+      text(1,1.025*max(tree$coords$a1),pos=4,paste0(mut1,"/",strsplit(x=mut2,split="-")[[1]][4]))
     }
   }
 }
@@ -3243,7 +3277,7 @@ set_tree_coords=function(atree){
   atree
 }
 
-plot_tree=function(tree,direction="down",cex.label=5,offset=0,plot_axis=T,title=NULL,b_do_not_plot=FALSE,lwd=1,bars=NULL,default_edge_color="darkgrey",ymax=NULL,cex.terminal.dots=0,vspace.reserve=0,cex.axis=1,tck=-0.02){
+plot_tree=function(tree,direction="down",cex.label=5,offset=0,plot_axis=T,title=NULL,b_do_not_plot=FALSE,lwd=1,bars=NULL,default_edge_color="darkgrey",ymax=NULL,cex.terminal.dots=0,vspace.reserve=0,cex.axis=1,tck=-0.02,scale=NULL){
   par(mar=c(1, 1, 1, 3) + 0.1)
   #browser()
   if(!(direction %in% c("down","across"))){
@@ -3304,8 +3338,10 @@ plot_tree=function(tree,direction="down",cex.label=5,offset=0,plot_axis=T,title=
   tree$direction=direction
   tree$top=top
   #scale =10
-  scales=c(0,0.5,2,5,10,100,200,500,1000,2000,5000)
-  scale=scales[max(which(ymax/4>scales))]
+  if(is.null(scale)) {
+    scales=c(0,0.5,2,5,10,100,200,500,1000,2000,5000)
+    scale=scales[max(which(ymax/4>scales))]
+  }
   #scale=scales[max(which(ymax/2>=scales))]
   #browser()
   cat("scale=",scale,"\n")
@@ -4312,3 +4348,395 @@ add_mut_heatmap=function(tree,heatmap,heatvals=NULL,border="white",heatmap_bar_h
   tree
 }
 
+
+plot_96profile=function(df,colnames=c("sampleID","chr","pos","ref","alt"),genomeFile,savefile=NULL) {
+  require(Rsamtools)
+  require(GenomicRanges)
+  require(IRanges)
+  mutations = data.frame(sampleID=df[[colnames[1]]],
+                         chr=df[[colnames[2]]],
+                         pos=df[[colnames[3]]],
+                         ref=df[[colnames[4]]],
+                         trinuc_ref= "-",
+                         mut=df[[colnames[5]]])
+  mutations_GRange<-GRanges(mutations$chr, IRanges::IRanges(mutations$pos-1, mutations$pos+1))
+  mutations$trinuc_ref = as.vector(Rsamtools::scanFa(file=genomeFile,mutations_GRange ))
+  
+  ntcomp = c(T="A",G="C",C="G",A="T")
+  mutations$sub = paste(mutations$ref,mutations$mut,sep=">")
+  mutations$trinuc_ref_py = mutations$trinuc_ref
+  for (j in 1:nrow(mutations)) {
+    if (mutations$ref[j] %in% c("A","G")) { # Purine base
+      mutations$sub[j] = paste(ntcomp[mutations$ref[j]],ntcomp[mutations$mut[j]],sep=">")
+      mutations$trinuc_ref_py[j] = paste(ntcomp[rev(strsplit(mutations$trinuc_ref[j],split="")[[1]])],collapse="")
+    }
+  }
+  freqs = table(paste(mutations$sub,paste(substr(mutations$trinuc_ref_py,1,1),substr(mutations$trinuc_ref_py,3,3),sep="-"),sep=","))
+  sub_vec = c("C>A","C>G","C>T","T>A","T>C","T>G")
+  ctx_vec = paste(rep(c("A","C","G","T"),each=4),rep(c("A","C","G","T"),times=4),sep="-")
+  full_vec = paste(rep(sub_vec,each=16),rep(ctx_vec,times=6),sep=",")
+  freqs_full = freqs[full_vec]; freqs_full[is.na(freqs_full)] = 0; names(freqs_full) = full_vec
+  
+  xstr = paste(substr(full_vec,5,5), substr(full_vec,1,1), substr(full_vec,7,7), sep="")
+  
+  if(is.null(savefile)) {
+    colvec = rep(c("dodgerblue","black","red","grey70","olivedrab3","plum2"),each=16)
+    y = freqs_full; maxy = max(y)
+    h = barplot(y, las=2, col=colvec, border=NA, ylim=c(0,maxy*1.5), space=1, cex.names=0.6, names.arg=xstr, ylab="Number mutations")
+    for (j in 1:length(sub_vec)) {
+      xpos = h[c((j-1)*16+1,j*16)]
+      rect(xpos[1]-0.5, maxy*1.2, xpos[2]+0.5, maxy*1.3, border=NA, col=colvec[j*16])
+      text(x=mean(xpos), y=maxy*1.3, pos=3, label=sub_vec[j])
+    }
+  } else {
+    pdf(paste0(savefile,".pdf"),width = 15,height=6)
+    colvec = rep(c("dodgerblue","black","red","grey70","olivedrab3","plum2"),each=16)
+    y = freqs_full; maxy = max(y)
+    h = barplot(y, las=2, col=colvec, border=NA, ylim=c(0,maxy*1.5), space=1, cex.names=0.6, names.arg=xstr, ylab="Number mutations")
+    for (j in 1:length(sub_vec)) {
+      xpos = h[c((j-1)*16+1,j*16)]
+      rect(xpos[1]-0.5, maxy*1.2, xpos[2]+0.5, maxy*1.3, border=NA, col=colvec[j*16])
+      text(x=mean(xpos), y=maxy*1.3, pos=3, label=sub_vec[j])
+    }
+    dev.off()
+  }
+}
+
+find_latest_acquisition_node=function(tree,pos_samples){
+  #Get list of ancestral nodes for all samples
+  ancestral_nodes_list=lapply(pos_samples,function(Sample) {
+    get_ancestral_nodes(node = which(tree$tip.label==Sample),edge=tree$edge,exclude_root = F)
+  })
+  #Find nodes that are ancestral to all the samples
+  common_nodes=Reduce(intersect,ancestral_nodes_list)
+  #Which of these is the most recent (i.e. has the maximum node height)
+  nodeheights<-sapply(common_nodes,function(node) nodeheight(tree = tree,node = node))
+  MRCA_node<-common_nodes[which.max(nodeheights)]
+  return(MRCA_node)
+}
+
+
+compare_nodes=function(x, y) 
+{
+  tree1 <- deparse(substitute(x))
+  tree2 <- deparse(substitute(y))
+  n1 <- Ntip(x)
+  n2 <- Ntip(y)
+  
+  key1 <- makeNodeLabel(x, "md5sum")$node.label
+  key2 <- makeNodeLabel(y, "md5sum")$node.label
+  mk12 <- match(key1, key2)
+  mk21 <- match(key2, key1)
+  if (any(tmp <- is.na(mk12))) {
+    nk <- sum(tmp)
+  }
+  if (any(tmp <- is.na(mk21))) {
+    nk <- sum(tmp)
+  }
+  nodes1 <- which(!is.na(mk12))
+  nodes2 <- mk12[!is.na(mk12)]
+  
+  NODES <- data.frame(nodes1 + n1,nodes2 + n2)
+  names(NODES) <- c(tree1, tree2)
+  return(NODES)
+}
+
+##Function to give the tree comparison stats using Quartet
+get_tree_comp_stats=function(tree1,tree2) {
+  if(!is.null(tree1)) {
+    #Harmonise the trees by only keeping samples in both trees
+    tree1<-drop.tip(tree1,tree1$tip.label[!tree1$tip.label%in%tree2$tip.label])
+    tree2<-drop.tip(tree2,tree2$tip.label[!tree2$tip.label%in%tree1$tip.label])
+    
+    #Calculate and print the similarity metrics for the iqtree tree
+    splits_comp<-Quartet::SplitStatus(tree1,tree2)
+    RF_diff<-round(Quartet::SimilarityMetrics(splits_comp)[,"SymmetricDifference"],digits=5)
+    
+    #Quartet is unable to run the quartet status for very large trees (includes KX004)
+    if(length(tree1$tip.label)>477) {
+      Quartet_diff<-NA
+    } else {
+      quartets_comp<-Quartet::QuartetStatus(tree1,tree2)
+      Quartet_diff<-round(Quartet::SimilarityMetrics(quartets_comp)[,"SymmetricDifference"],digits = 5)
+    }
+  } else {
+    RF_diff<-NA;Quartet_diff<-NA
+  }
+  return(data.frame(RF_diff=RF_diff,Quartet_diff=Quartet_diff))
+}
+
+add_mut_heatmap_PVV= function(tree,heatmap,heatvals=NULL,border="white",heatmap_bar_height=0.05,cex.label=2,label.cols=NA){
+  ymax=tree$ymax
+  idx=match(colnames(heatmap),tree$tip.label)
+  top=-0.01*ymax
+  gap=tree$vspace.reserve/dim(heatmap)[1]
+  labels=rownames(heatmap)
+  for(i in 1:dim(heatmap)[1]){
+    bot=top-heatmap_bar_height*ymax
+    #bot=top-(0.05/dim(heatmap)[1])*ymax
+    rect(xleft=idx-0.5,xright=idx+0.5,ybottom = bot,ytop=top,col = heatmap[i,],border=border,lwd = 0.25)
+    if(!is.null(heatvals)){
+      text(xx=idx,y=0.5*(top+bot),labels = sprintf("%3.2f",heatvals[i,]))
+    }
+    if(!is.null(labels)){
+      if(!is.na(label.cols[1])) {
+        text(labels[i],x=-0.02,y=0.5*(top+bot),pos = 2,cex = cex.label,col=label.cols[i])
+      } else {
+        text(labels[i],x=-0.02,y=0.5*(top+bot),pos = 2,cex = cex.label)
+      }
+      
+    }
+    top=bot
+  }
+  tree
+}
+
+#Define function required later in script for comparing phylogenies
+comparePhylo_and_plot=function(tree1,tree2,names,lwd=1){
+  plot_comp_tree=function(tree,comp,title,col="red",lwd=lwd,tree_pos){
+    tree_name=deparse(substitute(tree))
+    shared_clades=comp[,tree_pos]
+    edge_width=sapply(tree$edge[,2],function(node) ifelse(node%in%c(1:length(tree$tip.label),shared_clades),lwd,2*lwd))
+    edge_col=sapply(tree$edge[,2],function(node) ifelse(node%in%c(1:length(tree$tip.label),shared_clades),"black",col))
+    plot(tree,show.tip.label=F,direction="downwards",edge.color=edge_col,edge.width=edge_width,main=title)
+  }
+  comp<-compare_nodes(tree1,tree2)
+  #par(mfrow=c(1,2))
+  plot_comp_tree(tree1,comp=comp,title=names[1],tree_pos = 1,lwd = lwd)
+  plot_comp_tree(tree2,comp=comp,title=names[2],tree_pos = 2,lwd = lwd)
+}
+
+get_RF_dist=function(tree1,tree2){
+  comp<-comparePhylo(tree1,tree2)
+  RF_dist=1-(length(comp$NODES[,1])/length(unique(tree$edge[,1])))
+  return(RF_dist)
+}
+
+create_vaf_mat=function(NV,NR) {NR[NR==0]<-1;return(NV/NR)}
+
+#Function to import the different trees, either on the farm, or via the mounted directories
+import_tree_file=function(SampleID,data_set,type) {
+  require(ape)
+  if(!type%in%c("mpboot","iqtree","scite")) {stop(print("Type must be either mpboot, iqtree, or scite"))}
+  root_dir=ifelse(Sys.info()['sysname']=="Darwin","~/Mounts/lustre2","/lustre/scratch126/casm/team154pc/ms56")
+  
+  if(type=="mpboot") {
+    files=list.files(paste0(root_dir,"/lesion_segregation/input_data/",data_set,"/"),pattern = ".tree",full.names = T)
+    relevant_tree_path=grep(paste0("_",SampleID),x=files,value = T)
+  } else {
+    if(data_set=="MSC_BMT") {
+      HSCT_dir=paste0(root_dir,"/Zur_HSCT/final_versions")
+      relevant_pattern=ifelse(type=="iqtree",".fa.allocated_muts.tree","scite_tree_allocated_muts_")
+      relevant_tree_files=list.files(path=HSCT_dir,pattern=relevant_pattern,full.names = T)
+      relevant_tree_path=grep(SampleID,relevant_tree_files,value=T)
+      
+    } else if(data_set=="MF") {
+      relevant_tree_path=ifelse(type=="iqtree",paste0(root_dir,"/Marga_benchmarking/",SampleID,"/iqtree_tree_allocated_muts_",SampleID,".tree"),paste0(root_dir,"/Marga_benchmarking/",SampleID,"/scite_tree_allocated_muts_",SampleID,".tree"))
+      tree=ape::read.tree(relevant_tree_path)
+    } else if(data_set=="EM") {
+      shortID=stringr::str_split(SampleID,pattern = "_",simplify = T)[,1]
+      relevant_tree_path=ifelse(type=="iqtree",paste0(root_dir,"/Emily_benchmarking/",shortID,"/vaf_filtered/iqtree_tree_allocated_muts_",SampleID,".tree"),paste0(root_dir,"/Emily_benchmarking/",shortID,"/vaf_filtered/scite_tree_allocated_muts_",SampleID,".tree"))
+    }
+  }
+  
+  #Return the relevant tree if it exists
+  if(file.exists(relevant_tree_path)) {
+    print(paste("The",type,"tree for",SampleID,"is being read in."))
+    tree=read.tree(relevant_tree_path)
+    return(tree)
+  } else {
+    print(paste("The",type,"tree for",SampleID,"is not found at the expected location."))
+    return(NULL)
+  }
+}
+
+import_muts_file=function(SampleID,data_set) {
+  root_dir=ifelse(Sys.info()['sysname']=="Darwin","~/Mounts/lustre2","/lustre/scratch126/casm/team154pc/ms56")
+  
+  data_set_muts_files=list.files(path=paste0(root_dir,"/lesion_segregation/input_data/",data_set),pattern="annotated",full.names = T)
+  filepath=grep(paste0("_",SampleID),data_set_muts_files,value=T)
+  load(filepath)
+  return(filtered_muts)
+}
+
+get_direct_daughters=function(ancestral_node,tree){
+  level_ancestors=c(ancestral_node,get_level_daughters(ancestral_node,tree))
+  all_daughters=tree$edge[tree$edge[,1]%in%level_ancestors,2]
+  true_daughters=all_daughters[!all_daughters%in%level_ancestors]
+  return(true_daughters)
+}
+
+#Function to create the heatmap used below the trees to show the VAFs
+create_mutation_heatmap=function(mut_refs1,mut_refs2=NULL,matrices,tree,cols=c("#FF7F00","#377EB8")) {
+  vaf_mat=create_vaf_mat(matrices$NV,matrices$NR)
+  combined_muts=c(mut_refs1,mut_refs2)
+  hm=matrix(NA,nrow=length(combined_muts),ncol=length(tree$tip.label),dimnames = list(combined_muts,tree$tip.label))
+  
+  muttype1_cols=colorRampPalette(colors=c("white",cols[1]))(101)
+  muttype2_cols=colorRampPalette(colors=c("white",cols[2]))(101)
+  for(i in 1:nrow(hm)) {
+    if(i %in% 1:length(mut_refs1)) {palette<-muttype1_cols} else {palette <-muttype2_cols}
+    for(j in 1:ncol(hm)) {
+      vaf<-vaf_mat[combined_muts[i],tree$tip.label[j]]
+      hm[i,j]<-palette[1+round(100*vaf)]
+    }
+  }
+  return(hm)
+}
+
+#Altered version of the MutationalPatterns signature to view just a single context
+plot_192_profile_single_context=function (mut_matrix, select_context="C>T",col = "red", text_col="white",ymax = 0.3, condensed = FALSE) {
+  freq <- full_context <- substitution <- context <- strand <- full_context_strand <- NULL
+  norm_mut_matrix <- apply(mut_matrix, 2, function(x) x/sum(x))
+  tb <- norm_mut_matrix %>% as.data.frame() %>% tibble::rownames_to_column("full_context_strand") %>% 
+    tidyr::separate(full_context_strand, into = c("full_context", 
+                                                  "strand"), sep = "-") %>% dplyr::mutate(substitution = stringr::str_replace(full_context, 
+                                                                                                                              "\\w\\[(.*)\\]\\w", "\\1"), context = stringr::str_replace(full_context, 
+                                                                                                                                                                                         "\\[.*\\]", "\\.")) %>% dplyr::select(-full_context) %>% 
+    tidyr::pivot_longer(c(-substitution, -context, -strand), 
+                        names_to = "sample", values_to = "freq") %>%
+    dplyr::mutate(sample = factor(sample,levels = unique(sample)))%>%
+    mutate(strand=stringr::str_to_sentence(strand))
+  width <- 0.6
+  spacing <- 0.5
+
+  plot <- ggplot(data = tb%>%filter(substitution==select_context), aes(x = context, y = freq, 
+                                  fill = substitution, width = width, alpha = strand)) + 
+    geom_bar(stat = "identity", colour = "black", size = 0.2) + 
+    scale_alpha_discrete(range = c(0.1, 1)) +
+    scale_fill_manual(values = col) +
+    facet_grid( ~ substitution) +
+    labs(y="Relative contribution",x="Sequence context",alpha="Strand") +
+    coord_cartesian(ylim = c(0, ymax)) + scale_y_continuous(breaks = seq(0,ymax, 0.1))+
+    guides(fill = "none") + theme_bw() + 
+      theme(axis.title.y = element_text(size = 12, vjust = 1), 
+            axis.text.y = element_text(size = 8), axis.title.x = element_text(size = 12), 
+            axis.text.x = element_text(size = 5, angle = 90,vjust = 0.5),
+            strip.text.x = element_text(size = 10,colour = text_col),
+            panel.grid.major.x = element_blank(),
+            strip.background = element_rect(fill=col),
+            legend.title = element_text(size=9),
+            panel.spacing.x = unit(spacing, "lines"),
+            panel.grid.major.y = element_blank(),
+            panel.grid.minor.y = element_blank())
+
+  return(plot)
+}
+
+plot_lesion_segregation_MOD=function (vcf, per_chrom = FALSE, sample_name = NA, min_muts_mean = 10, 
+          chromosomes = NA, subsample = NA) {
+  vcf_list <- vcf
+  max_pos <- start_mb <- notused <- n <- y <- NULL
+  if (inherits(vcf_list, "list")) {
+    vcf_list <- GenomicRanges::GRangesList(vcf_list)
+  }
+  GenomeInfoDb::genome(vcf_list) <- NA
+  GenomeInfoDb::seqlevelsStyle(vcf_list) <- "NCBI"
+
+  gr <- MutationalPatterns:::.get_strandedness_gr(vcf_list)
+  tb <- MutationalPatterns:::.get_strandedness_tb(gr)
+  tb$sample <- "MySample"
+  sample_names <- "MySample"
+  nr_samples <- 1
+  max_nr_mutations <- length(vcf_list)  
+
+  tb <- dplyr::mutate(tb, sample = factor(sample, levels = unique(sample)))
+  chromosomes <- GenomeInfoDb::seqlevelsInUse(vcf_list)
+  if (!length(chromosomes)) {
+    chromosomes <- GenomeInfoDb::seqlevels(vcf_list)
+  }
+  tb$seqnames <- factor(tb$seqnames, levels = chromosomes)
+
+  chroms <- levels(tb$seqnames)
+  nr_chroms <- length(chroms)
+  chrom_lengths <- GenomeInfoDb::seqlengths(vcf_list)[chroms]
+  chr_starts <- tibble::tibble(start_mb = rep(1, nr_chroms), 
+                               seqnames = chroms)
+  chr_ends <- tibble::tibble(start_mb = chrom_lengths/1e+06, 
+                             seqnames = chroms)
+  chr_limits <- rbind(chr_starts, chr_ends)
+  tb_limits <- tibble::tibble(sample = factor(rep(sample_names, 
+                                                  each = 2 * nr_chroms), levels = levels(tb$sample)), start_mb = rep(chr_limits$start_mb, 
+                                                                                                                     nr_samples), seqnames = factor(rep(chr_limits$seqnames, 
+                                                                                                                                                        nr_samples), levels = chroms), y = 0.5)
+  tb_mean <- tb %>% dplyr::group_by(seqnames, sample) %>% dplyr::summarize(y = mean(y), 
+                                                                           n = dplyr::n(), .groups = "drop_last") %>% dplyr::ungroup() %>% 
+    dplyr::right_join(tb_limits[, c("sample", "seqnames", 
+                                    "start_mb")], by = c("seqnames", "sample")) %>% dplyr::filter(n >= 
+                                                                                                    min_muts_mean) %>% dplyr::mutate(sample = factor(sample, 
+                                                                                                                                                     levels = levels(tb$sample)))
+  point_size <- 200/max_nr_mutations
+  if (per_chrom == TRUE) {
+    point_size <- point_size * 5
+  }
+  if (point_size > 2) {
+    point_size <- 2
+  }
+  else if (point_size < 0.02) {
+    point_size <- 0.02
+  }
+  fig <- plot_lesion_segregation_gg_MOD(tb, tb_mean, tb_limits, 
+                                        point_size, sample_name)
+  return(fig)
+}
+
+plot_lesion_segregation_gg_MOD=function (tb, tb_mean, tb_limits, point_size, sample_name) 
+{
+  y <- start_mb <- NULL
+  if (is.na(sample_name)) {
+    my_labs <- labs(y = "Strand", x = "Coordinate (mb)")
+  }
+  else {
+    my_labs <- labs(y = "Strand", x = "Coordinate (mb)", 
+                    title = sample_name)
+  }
+  fig <- ggplot(mapping = aes(y = y, x = start_mb, color = y)) + 
+    geom_jitter(data = tb,width = 0.05, height = 0.1, size = point_size) +
+    facet_grid( ~ seqnames, scales = "free_x", space = "free_x") +
+    geom_blank(data = tb_limits) + 
+    scale_y_continuous(breaks = c(0, 1), labels = c("-","+"), limits = c(-1, 2)) +
+    my_labs +
+    theme_bw() + 
+    theme(text = element_text(size = 8), axis.text.x = element_text(size=6,angle=90), 
+          axis.text.y = element_text(size = 8), 
+          legend.position = "none") + 
+    scale_color_gradientn(colors = c("#008BCE", "grey90", 
+                                     "#E5018C"), limits = c(0, 1))
+  return(fig)
+}
+
+#Functions for handling the HDP objects
+create_exposures_df=function(HDP_multi,trinuc_mut_mat,key_table,minimum_branch_muts=50,sep="_") {
+  sample_remove=rownames(trinuc_mut_mat)[rowSums(trinuc_mut_mat)<minimum_branch_muts]
+  trinuc_mut_mat=trinuc_mut_mat[!rownames(trinuc_mut_mat)%in%sample_remove,]
+  key_table=key_table[!key_table$Sample%in%sample_remove,]
+  freq=nrow(trinuc_mut_mat)
+  
+  dp_distn <- comp_dp_distn(HDP_multi)
+  ndp <- nrow(dp_distn$mean)
+  ncomp <- ncol(dp_distn$mean)
+  exposures <- t(dp_distn$mean[length(freq)+1+1:nrow(trinuc_mut_mat),,drop=FALSE])
+  colnames(exposures)=rownames(trinuc_mut_mat)
+  rownames(exposures)<-paste0("N",rownames(exposures))
+  sigs=rownames(exposures)
+  sig_profiles=HDP_multi@comp_categ_distn$mean
+  
+  exposures_df<-as.data.frame(t(exposures),stringsAsFactors=F)%>%
+    tibble::rownames_to_column("branch")%>%
+    tidyr::separate(col="branch",into=c("node","Sample_ID"),sep=sep)%>%
+    mutate(node=as.numeric(node))
+  return(exposures_df)
+}
+
+mut_mat_HDP_comp=function(HDP_multi,ymax=0.2,plot=T){
+  require(MutationalPatterns)
+  sig_profiles=t(mut_example_multi@comp_categ_distn$mean)
+  colnames(sig_profiles)<-paste0("N",0:(ncol(sig_profiles)-1))
+  bases=c("A","C","G","T")
+  subs=c("[C>A]","[C>G]","[C>T]","[T>A]","[T>C]","[T>G]")
+  rownames(sig_profiles)<-paste0(rep(rep(bases,each=4),times=6),rep(subs,each=16),rep(bases,times=24))
+  if(plot){
+    plot_96_profile(sig_profiles,ymax=ymax,condensed = T) 
+  }
+  return(sig_profiles)
+}

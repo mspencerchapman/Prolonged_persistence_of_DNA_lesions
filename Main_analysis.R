@@ -1,7 +1,7 @@
-#----------------------------------
-# Load packages (and install if they are not installed yet)
-#----------------------------------
-cran_packages=c("ggplot2","dplyr","tidyr","gridExtra","ggrepel","RColorBrewer","tibble","ape","dichromat","seqinr","stringr","readr","phytools","devtools","lmerTest")
+#========================================#
+# Load packages (and install if they are not installed yet) ####
+#========================================#
+cran_packages=c("ggplot2","dplyr","RColorBrewer","tibble","ape","dichromat","seqinr","stringr","readr","phytools","devtools","phangorn","MASS","tidyr")
 bioconductor_packages=c("GenomicRanges","IRanges","MutationalPatterns","MASS","Rsamtools")
 
 for(package in cran_packages){
@@ -12,7 +12,6 @@ for(package in cran_packages){
 }
 if (!require("BiocManager", quietly = T, warn.conflicts = F))
   install.packages("BiocManager")
-
 for(package in bioconductor_packages){
   if(!require(package, character.only=T,quietly = T, warn.conflicts = F)){
     BiocManager::install(as.character(package))
@@ -23,47 +22,52 @@ if(!require("treemut", character.only=T,quietly = T, warn.conflicts = F)){
   install_git("https://github.com/NickWilliamsSanger/treemut")
   library("treemut",character.only=T,quietly = T, warn.conflicts = F)
 }
-if(!require("hdp", character.only=T,quietly = T, warn.conflicts = F)){
-  devtools::install_github("nicolaroberts/hdp", build_vignettes = F)
-  library("hdp",character.only=T,quietly = T, warn.conflicts = F)
-}
+options(stringsAsFactors = FALSE)
 
-#----------------------------------
-# Set the ggplot2 theme and palettes for plotting
-#----------------------------------
+#========================================#
+# Set the ggplot2 themes for plotting ####
+#========================================#
 
 palette2=c("#E30613","#1D71B8")
 palette6=c("#72e5ef", "#074d65", "#3d99ce", "#c257d3", "#d1add5", "#61356e")
-palette8=c("#2EBAED" ,"#000000" ,"#DE1C14", "#E98C7B", "#D4D2D2" ,"#ADCC54" ,"#F0D0CE","blue")
-my_theme=theme_classic(base_family="Helvetica")+theme(text=element_text(size=7,family="Helvetica"),
-                                                      axis.text=element_text(size=5,family="Helvetica"),
-                                                      strip.text = element_text(size=6,family="Helvetica"),
-                                                      legend.key.height = unit(0.25, 'cm'),
-                                                      legend.key.width = unit(0.25, 'cm'),
-                                                      legend.title = element_text(size=6),
-                                                      legend.text = element_text(size=5,family="Helvetica"))
+palette8=c("#2EBAED" ,"#000000" ,"#DE1C14", "#E98C7B", "#D4D2D2" ,"#ADCC54" ,"#F0D0CE","blue")s
+my_theme<-theme_classic()+
+  theme(text = element_text(family="Helvetica"),
+        axis.text = element_text(size = 7),
+        axis.title = element_text(size=8),
+        axis.line = element_line(linewidth = 0.4),
+        axis.ticks = element_line(linewidth = 0.3),
+        legend.text = element_text(size=6),
+        legend.title = element_text(size=8),
+        strip.text = element_text(size=7),
+        strip.background = element_rect(fill="lightgray",linewidth = 0.4),
+        legend.spacing = unit(1,"mm"),
+        legend.key.size= unit(5,"mm"))
 
 
-#----------------------------------
-# Set the root directory and read in the necessary files
-#----------------------------------
+#========================================#
+# Set the root directory and read in the necessary files ####
+#========================================#
+
+root_dir="~/R_work/Prolonged_persistence_of_DNA_lesions/"
+plots_dir=paste0(root_dir,"plots/")
+data_dir=paste0(root_dir,"Data/")
+output_dir=paste0(root_dir,"/output/")
+source(paste0(root_dir,"/Data/Prolonged_persistence_functions.R"))
+ref_table=read.csv(paste0(root_dir,"/Data/metadata/Individual_ref.csv"))
+genome_file=ifelse(Sys.info()['sysname']=="Darwin","~/R_work/reference_files/genome.fa","/nfs/cancer_ref02/human/GRCh37d5/genome.fa")##Set to the location of GRCh37 genome file
 
 options(stringsAsFactors = FALSE)
-root_dir="~/R_work/Prolonged_persistence_of_DNA_lesions/"
-data_dir=paste0(root_dir,"Data/")
-plots_dir=paste0(root_dir,"Plots/")
-source(paste0(data_dir,"Prolonged_persistence_functions.R")) #Source functions needed for the script
-resave_plots=F
 
-Phasing_MAV_file_path=paste0(data_dir,"Phasing_results_MAVs_all")
-Phasing_PVV_file_path=paste0(data_dir,"Phasing_results_PVVs_all")
-ASCAT_PVV_file_path=paste0(data_dir,"ASCAT_LOH_analysis_PVVs_all")
-ASCAT_MAV_file_path=paste0(data_dir,"ASCAT_LOH_analysis_MAVs_all")
-SN_phasing_file_path=paste0(data_dir,"Phasing_results_MAVs_SN.csv")
 
-lesion_seg_input_dir="/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data"
-lesion_seg_output_dir="/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/output2"
-genome_file="~/R_work/reference_files/genome.fa"
+Phasing_MAV_file_path=paste0(data_dir,"phasing_results/Phasing_results_MAVs_all")
+Phasing_PVV_file_path=paste0(data_dir,"phasing_results/Phasing_results_PVVs_all")
+ASCAT_PVV_file_path=paste0(data_dir,"ASCAT_LOH_analysis/ASCAT_LOH_analysis_PVVs_all")
+ASCAT_MAV_file_path=paste0(data_dir,"ASCAT_LOH_analysis/ASCAT_LOH_analysis_MAVs_all")
+SN_phasing_file_path=paste0(data_dir,"phasing_results/Phasing_results_MAVs_SN.csv")
+
+lesion_seg_input_dir=paste0(data_dir,"/input_data")
+lesion_seg_output_dir=output_dir
 
 mutations_file=paste0(data_dir,"mutations.tsv")
 summary_df_file=paste0(data_dir,"summary_df.tsv")
@@ -72,16 +76,15 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
   
   mutations<-read.delim(mutations_file)
   summary_table_df<-read.delim(summary_df_file)
-  sample_ref=read.csv(paste0(data_dir,"Individual_ref.csv"))
+  sample_ref=read.csv(paste0(data_dir,"metadata/Individual_ref.csv"))
   
 } else {
   #Set data file paths
   data_sets=c("NW","MF","EM","KY","MSC_BMT","MSC_fetal","SN")
   out_list=lapply(data_sets,function(data_set) {
     print(data_set)
-    files=list.files(paste0(lesion_seg_output_dir,"/",data_set,"/"),pattern = "_mut_table.tsv",full.names = T)
-    print(files)
-    mut_tables_list=lapply(files,read.delim)
+    files=list.files(paste0(output_dir,"/",data_set,"/"),pattern = "_mut_table.tsv",full.names = T)
+    mut_tables_list=lapply(files,readr::read_delim,delim="\t",col_types=c("cccccccciiccciiiiiiccccc"))
     mut_tables_list=lapply(mut_tables_list,function(df) {
       df$colonies_per_negative_subclade<-as.character(df$colonies_per_negative_subclade)
       df$depth_per_negative_subclade<-as.character(df$depth_per_negative_subclade)
@@ -92,9 +95,6 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
     return(mut_tables_df)
   })
   mutations=dplyr::bind_rows(out_list)
-  mutations$Ref[mutations$Ref=="TRUE"]<-"T"
-  mutations$Alt1[mutations$Alt1=="TRUE"]<-"T"
-  mutations$Alt2[mutations$Alt2=="TRUE"]<-"T"
   
   #ADD THE TRINUCLEOTIDE REFERENCE
   mutations$Chrom=str_split(mutations$Chrom_pos,pattern="-",simplify=TRUE)[,1]
@@ -123,7 +123,7 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
   mutations$mut_profile_2=paste0(substr(mutations$trinuc_ref_py,1,1),"[",mutations$Sub2,"]",substr(mutations$trinuc_ref_py,3,3))
   
   #Add individual-level metadata
-  sample_ref=read.csv(paste0(data_dir,"Individual_ref.csv"))
+  sample_ref=read.csv(paste0(data_dir,"metadata/Individual_ref.csv"))
   mutations$cat=sapply(mutations$Sample_ID,function(sample) return(sample_ref$Category[sample_ref$Sample_ID==sample]))
   mutations<-mutations%>%filter(data_set!="PR")
   
@@ -134,7 +134,7 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
     print(data_set)
     data_set_samples=readLines(paste0(lesion_seg_input_dir,"/",data_set,"_samples.txt"))
     data_set_df_list=lapply(data_set_samples,function(sample){
-      sample_info=get_file_paths_and_project(data_set,Sample_ID=sample)
+      sample_info=get_file_paths_and_project(data_set,Sample_ID=sample,input_data_dir = lesion_seg_input_dir)
       tree=read.tree(sample_info$tree_file_path)
       df=data.frame(Sample_ID=sample,
                     n_sample=length(tree$tip.label),
@@ -163,6 +163,7 @@ if(file.exists(mutations_file)&file.exists(summary_df_file)) {
 
 #Analysis of MAV phasing
 MAV_mutations=mutations%>%filter(Type=="MAV")
+dim(MAV_mutations)
 
 #Fail any "removed" mutations with more than 1 negative subclade (likely to be independently-acquired mutations)
 MAV_mutations$n_neg=sapply(MAV_mutations$colonies_per_negative_subclade,function(x) length(unlist(strsplit(x[!is.na(x)],","))))
@@ -208,7 +209,7 @@ MAV_neg_clades_phasing_df$basic_result=sapply(MAV_neg_clades_phasing_df$result,f
 MAV_mutations=left_join(MAV_mutations,MAV_neg_clades_phasing_df[,c("Chrom_pos","result","basic_result")],by="Chrom_pos") #Join this to the mutations dataframe
 MAV_mutations%>%filter(Class!="FAIL" & (is.na(basic_result)|basic_result!="LOH"))%>%pull(phasing_summary)%>%table()
 
-myPhasingColors <- c("#33A02C","#FB9A99","grey")
+myPhasingColors <- c("#478EB0","#A35563","grey")
 names(myPhasingColors) <- levels(MAV_mutations$phasing_summary)
 
 p.MAV.0.1<-MAV_mutations%>%
@@ -223,7 +224,6 @@ p.MAV.0.1<-MAV_mutations%>%
   theme_classic()+
   my_theme+
   labs(x="Number of negative\nsubclades",y="Number of mutations")
-
 
 #Review the non-matching phasing mutations
 MAV_mutations%>%
@@ -825,6 +825,7 @@ p.PVV.1.2<-PVV_mutations%>%
   mutate(cat=stringr::str_replace(cat,pattern = "_",replacement = "\n"))%>%
   group_by(PVV_pos_clade_phasing)%>%
   dplyr::count(PVV_pos_clade_phasing,cat)%>%
+  tidyr::complete(PVV_pos_clade_phasing,fill=list(n=0))%>%
   ggplot(aes(x=cat,y=n,fill=PVV_pos_clade_phasing))+
   geom_bar(stat="identity",position="stack",col=NA,size=0.2)+
   scale_fill_manual(name = "PVV phasing",values = myPhasingColors,labels = function(x) str_wrap(x, width = 18))+
@@ -869,7 +870,7 @@ p.PVV.1.5<-PVV_mutations%>%
   filter(basic_result=="LOH")%>%
   dplyr::count(ASCAT_result)%>%
   ggplot(aes(x="Read count LOH",y=n,fill=ASCAT_result))+
-  geom_bar(stat="identity",position="stack",col=NA,size=0.2)+
+  geom_bar(stat="identity",position="stack",col=NA,linewidth=0.2)+
   scale_fill_manual(name = "ASCAT result",values=myLOHColors,labels = function(x) str_wrap(x, width = 9))+
   theme_classic()+
   my_theme+
@@ -942,8 +943,17 @@ p.PVV.3.1<-PVV_mutations%>%
 ggsave(p.PVV.3.1,filename = paste0(plots_dir,"PVV_no_of_divisions.pdf"),width = 2.5,height=2)
 
 #REMOVE THE MUTATIONS FROM OTHER MECHANISMS FOR DOWNSTREAM ANALYSIS (i.e. signatures etc.)
+#Several mutations were found to be likely artefactual by manual review during the peer-review process, these are manually annotated here
+artefactual_muts=c("3-57906539-C-T",
+                   "3-182038851-AT-A",
+                   "1-32201632-C-T",
+                   "10-63986636-C-T",
+                   "14-82666754-G-A",
+                   "6-104547705-C-A")
+
 #Note that some "non-genuine" PVVs (by a variety of mechanisms) will still remain as not all individual mutations were assessable
-PVV_mutations<-PVV_mutations%>%mutate(Class=ifelse(ASCAT_result!="LOH"& basic_result!="LOH" & PVV_pos_clade_phasing!="Non-matching phasing confirmed"&no_of_cell_divisions<=6,Class,"FAIL"))
+PVV_mutations<-PVV_mutations%>%mutate(Class=ifelse(ASCAT_result!="LOH"& basic_result!="LOH" & PVV_pos_clade_phasing!="Non-matching phasing confirmed"&no_of_cell_divisions<=6 & !mut_ref1%in%artefactual_muts,Class,"FAIL"))
+
 PVV_mutations<-PVV_mutations%>%filter(Class!="FAIL")
 
 #Or select only those that most stringently are not excluded
@@ -1156,6 +1166,7 @@ p.PVV.7.2a<-lapply(c("PX001_2_01"),function(Sample_ID) {
   geom_violin(fill="grey")+
   theme_classic()+
   my_theme
+
 #ASSESS NUMBERS of PVVs per sample
 n_PVV_summary<-PVV_mutations%>%
   filter(!is.na(lesion_node))%>%

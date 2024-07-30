@@ -15,7 +15,7 @@ options(stringsAsFactors = FALSE)
 my_working_directory<-getwd()
 
 #Source functions needed for the script
-R_function_files = list.files("/lustre/scratch119/realdata/mdt1/team154/ms56/my_functions",pattern=".R",full.names=TRUE)
+R_function_files = list.files("/lustre/scratch126/casm/team154pc/ms56/my_functions",pattern=".R",full.names=TRUE)
 sapply(R_function_files[-2],source)
 
 
@@ -39,7 +39,7 @@ write.vcf=function(details,vcf_path,select_vector=NULL,from_mut_ref=F,mut_ref_co
   system(paste0("rm ",vcf_path,".temp"))
 }
 
-write_branch_muts_as_vcfs=function(details,Sample_ID,output_dir,vcf_header_path="/lustre/scratch119/casm/team154pc/ms56/Zur_HSCT/filtering_runs/mutation_vcfs/VCF_header_for_VaGrent.txt") {
+write_branch_muts_as_vcfs=function(details,Sample_ID,output_dir,vcf_header_path="/lustre/scratch126/casm/team154pc/ms56/Zur_HSCT/filtering_runs/mutation_vcfs/VCF_header_for_VaGrent.txt") {
   out=sapply(unique(details$node),function(node) {
     write.vcf(details,
               vcf_path=paste0(output_dir,"/",Sample_ID,"_",node,".vcf"),
@@ -53,8 +53,8 @@ write_branch_muts_as_vcfs=function(details,Sample_ID,output_dir,vcf_header_path=
 # Define autosomal chromosomes
 chromosomes <- seqnames(get(ref_genome))[1:22]
 
-lesion_seg_input_dir="/lustre/scratch119/casm/team154pc/ms56/lesion_segregation/input_data"
-output_dir="/lustre/scratch119/realdata/mdt1/team154/ms56/lesion_segregation/lesion_segregation_analysis"
+lesion_seg_input_dir="/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/input_data"
+output_dir="/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/lesion_segregation_analysis"
 system(paste0("mkdir -p ",output_dir))
 
 data_sets=c("NW","MF","EM","KY","PR","MSC_BMT","MSC_fetal")
