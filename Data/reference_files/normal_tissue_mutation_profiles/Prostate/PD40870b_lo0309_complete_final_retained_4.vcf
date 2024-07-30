@@ -1,0 +1,1056 @@
+##fileformat=VCFv4.1
+##FILTER=<ID=DTH,Description="Less than 1/3 mutant alleles were >= 25 base quality">
+##FILTER=<ID=RP,Description="Coverage was less than 8 and no mutant alleles were found in the first 2/3 of a read (shifted 0.08 from the start and extended 0.08 more than 2/3 of the read length)">
+##FILTER=<ID=MN,Description="More than 0.05 of mutant alleles that were >= 15 base quality found in the matched normal">
+##FILTER=<ID=PT,Description="Mutant alleles all on one direction of read (1rd allowed on opposite strand) and in second half of the read. Second half of read contains the motif GGC[AT]G in sequenced orientation and the mean base quality of all bases after the motif was less than 20">
+##FILTER=<ID=MQ,Description="Mean mapping quality of the mutant allele reads was < 21">
+##FILTER=<ID=SR,Description="Position falls within a simple repeat using the supplied bed file">
+##FILTER=<ID=CR,Description="Position falls within a centromeric repeat using the supplied bed file">
+##FILTER=<ID=PH,Description="Mutant reads were on one strand (permitted proportion on other strand: 0.04), and mean mutant base quality was less than 21">
+##FILTER=<ID=HSD,Description="Position falls within a high sequencing depth region using the supplied bed file">
+##FILTER=<ID=GI,Description="Position falls within a germline indel using the supplied bed file">
+##FILTER=<ID=VUM,Description="Position has >= 3 mutant allele present in at least 1 percent unmatched normal samples in the unmatched VCF.">
+##FILTER=<ID=SE,Description="Coverage is >= 10 on each strand but mutant allele is only present on one strand">
+##FILTER=<ID=MNP,Description="Tumour sample mutant allele proportion - normal sample mutant allele proportion < 0.2">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=FAZ,Number=1,Type=Integer,Description="Reads presenting a A for this position, forward strand">
+##FORMAT=<ID=FCZ,Number=1,Type=Integer,Description="Reads presenting a C for this position, forward strand">
+##FORMAT=<ID=FGZ,Number=1,Type=Integer,Description="Reads presenting a G for this position, forward strand">
+##FORMAT=<ID=FTZ,Number=1,Type=Integer,Description="Reads presenting a T for this position, forward strand">
+##FORMAT=<ID=RAZ,Number=1,Type=Integer,Description="Reads presenting a A for this position, reverse strand">
+##FORMAT=<ID=RCZ,Number=1,Type=Integer,Description="Reads presenting a C for this position, reverse strand">
+##FORMAT=<ID=RGZ,Number=1,Type=Integer,Description="Reads presenting a G for this position, reverse strand">
+##FORMAT=<ID=RTZ,Number=1,Type=Integer,Description="Reads presenting a T for this position, reverse strand">
+##FORMAT=<ID=PM,Number=1,Type=Float,Description="Proportion of mut allele">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##INFO=<ID=MP,Number=1,Type=Float,Description="Sum of CaVEMan somatic genotype probabilities">
+##INFO=<ID=GP,Number=1,Type=Float,Description="Sum of CaVEMan germline genotype probabilities">
+##INFO=<ID=TG,Number=1,Type=String,Description="Most probable genotype as called by CaVEMan">
+##INFO=<ID=TP,Number=1,Type=Float,Description="Probability of most probable genotype as called by CaVEMan">
+##INFO=<ID=SG,Number=1,Type=String,Description="2nd most probable genotype as called by CaVEMan">
+##INFO=<ID=SP,Number=1,Type=Float,Description="Probability of 2nd most probable genotype as called by CaVEMan">
+##INFO=<ID=DS,Number=.,Type=String,Description="DBSnp ID of known SNP">
+##INFO=<ID=SNP,Number=0,Type=Flag,Description="Position matches a dbSNP entry using the supplied bed file">
+##INFO=<ID=ASRD,Number=1,Type=Float,Description="A soft flag median (read length adjusted) alignment score of reads showing the variant allele">
+##INFO=<ID=CLPM,Number=1,Type=Float,Description="A soft flag median number of soft clipped bases in variant supporting reads">
+##INFO=<ID=ASMD,Number=1,Type=Float,Description="A soft flag median alignement score of reads showing the variant allele">
+##INFO=<ID=VD,Number=1,Type=String,Description="Vagrent Default Annotation">
+##INFO=<ID=VW,Number=1,Type=String,Description="Vagrent Most Deleterious Annotation">
+##INFO=<ID=VT,Number=1,Type=String,Description="Variant type based on the Vagrent Default Annotation">
+##INFO=<ID=VC,Number=.,Type=String,Description="Variant consequence based on the Vagrent Default Annotation">
+##SAMPLE=<ID=NORMAL,Description="Normal",Accession=.,Platform=WGS,Protocol=WGS,SampleName=PD40870b_lo0021,Source=.>
+##SAMPLE=<ID=TUMOUR,Description="Tumour",Accession=.,Platform=WGS,Protocol=WGS,SampleName=PD40870b_lo0309,Source=.>
+##cavemanVersion=1.11.2
+##cgpAnalysisProc_20190210.1=5069220
+##contig=<ID=1,assembly=NCBI37,length=249250621,species=Human>
+##contig=<ID=2,assembly=NCBI37,length=243199373,species=Human>
+##contig=<ID=3,assembly=NCBI37,length=198022430,species=Human>
+##contig=<ID=4,assembly=NCBI37,length=191154276,species=Human>
+##contig=<ID=5,assembly=NCBI37,length=180915260,species=Human>
+##contig=<ID=6,assembly=NCBI37,length=171115067,species=Human>
+##contig=<ID=7,assembly=NCBI37,length=159138663,species=Human>
+##contig=<ID=8,assembly=NCBI37,length=146364022,species=Human>
+##contig=<ID=9,assembly=NCBI37,length=141213431,species=Human>
+##contig=<ID=10,assembly=NCBI37,length=135534747,species=Human>
+##contig=<ID=11,assembly=NCBI37,length=135006516,species=Human>
+##contig=<ID=12,assembly=NCBI37,length=133851895,species=Human>
+##contig=<ID=13,assembly=NCBI37,length=115169878,species=Human>
+##contig=<ID=14,assembly=NCBI37,length=107349540,species=Human>
+##contig=<ID=15,assembly=NCBI37,length=102531392,species=Human>
+##contig=<ID=16,assembly=NCBI37,length=90354753,species=Human>
+##contig=<ID=17,assembly=NCBI37,length=81195210,species=Human>
+##contig=<ID=18,assembly=NCBI37,length=78077248,species=Human>
+##contig=<ID=19,assembly=NCBI37,length=59128983,species=Human>
+##contig=<ID=20,assembly=NCBI37,length=63025520,species=Human>
+##contig=<ID=21,assembly=NCBI37,length=48129895,species=Human>
+##contig=<ID=22,assembly=NCBI37,length=51304566,species=Human>
+##contig=<ID=X,assembly=NCBI37,length=155270560,species=Human>
+##contig=<ID=Y,assembly=NCBI37,length=59373566,species=Human>
+##contig=<ID=MT,assembly=NCBI37,length=16569,species=Human>
+##contig=<ID=GL000207.1,assembly=NCBI37,length=4262,species=Human>
+##contig=<ID=GL000226.1,assembly=NCBI37,length=15008,species=Human>
+##contig=<ID=GL000229.1,assembly=NCBI37,length=19913,species=Human>
+##contig=<ID=GL000231.1,assembly=NCBI37,length=27386,species=Human>
+##contig=<ID=GL000210.1,assembly=NCBI37,length=27682,species=Human>
+##contig=<ID=GL000239.1,assembly=NCBI37,length=33824,species=Human>
+##contig=<ID=GL000235.1,assembly=NCBI37,length=34474,species=Human>
+##contig=<ID=GL000201.1,assembly=NCBI37,length=36148,species=Human>
+##contig=<ID=GL000247.1,assembly=NCBI37,length=36422,species=Human>
+##contig=<ID=GL000245.1,assembly=NCBI37,length=36651,species=Human>
+##contig=<ID=GL000197.1,assembly=NCBI37,length=37175,species=Human>
+##contig=<ID=GL000203.1,assembly=NCBI37,length=37498,species=Human>
+##contig=<ID=GL000246.1,assembly=NCBI37,length=38154,species=Human>
+##contig=<ID=GL000249.1,assembly=NCBI37,length=38502,species=Human>
+##contig=<ID=GL000196.1,assembly=NCBI37,length=38914,species=Human>
+##contig=<ID=GL000248.1,assembly=NCBI37,length=39786,species=Human>
+##contig=<ID=GL000244.1,assembly=NCBI37,length=39929,species=Human>
+##contig=<ID=GL000238.1,assembly=NCBI37,length=39939,species=Human>
+##contig=<ID=GL000202.1,assembly=NCBI37,length=40103,species=Human>
+##contig=<ID=GL000234.1,assembly=NCBI37,length=40531,species=Human>
+##contig=<ID=GL000232.1,assembly=NCBI37,length=40652,species=Human>
+##contig=<ID=GL000206.1,assembly=NCBI37,length=41001,species=Human>
+##contig=<ID=GL000240.1,assembly=NCBI37,length=41933,species=Human>
+##contig=<ID=GL000236.1,assembly=NCBI37,length=41934,species=Human>
+##contig=<ID=GL000241.1,assembly=NCBI37,length=42152,species=Human>
+##contig=<ID=GL000243.1,assembly=NCBI37,length=43341,species=Human>
+##contig=<ID=GL000242.1,assembly=NCBI37,length=43523,species=Human>
+##contig=<ID=GL000230.1,assembly=NCBI37,length=43691,species=Human>
+##contig=<ID=GL000237.1,assembly=NCBI37,length=45867,species=Human>
+##contig=<ID=GL000233.1,assembly=NCBI37,length=45941,species=Human>
+##contig=<ID=GL000204.1,assembly=NCBI37,length=81310,species=Human>
+##contig=<ID=GL000198.1,assembly=NCBI37,length=90085,species=Human>
+##contig=<ID=GL000208.1,assembly=NCBI37,length=92689,species=Human>
+##contig=<ID=GL000191.1,assembly=NCBI37,length=106433,species=Human>
+##contig=<ID=GL000227.1,assembly=NCBI37,length=128374,species=Human>
+##contig=<ID=GL000228.1,assembly=NCBI37,length=129120,species=Human>
+##contig=<ID=GL000214.1,assembly=NCBI37,length=137718,species=Human>
+##contig=<ID=GL000221.1,assembly=NCBI37,length=155397,species=Human>
+##contig=<ID=GL000209.1,assembly=NCBI37,length=159169,species=Human>
+##contig=<ID=GL000218.1,assembly=NCBI37,length=161147,species=Human>
+##contig=<ID=GL000220.1,assembly=NCBI37,length=161802,species=Human>
+##contig=<ID=GL000213.1,assembly=NCBI37,length=164239,species=Human>
+##contig=<ID=GL000211.1,assembly=NCBI37,length=166566,species=Human>
+##contig=<ID=GL000199.1,assembly=NCBI37,length=169874,species=Human>
+##contig=<ID=GL000217.1,assembly=NCBI37,length=172149,species=Human>
+##contig=<ID=GL000216.1,assembly=NCBI37,length=172294,species=Human>
+##contig=<ID=GL000215.1,assembly=NCBI37,length=172545,species=Human>
+##contig=<ID=GL000205.1,assembly=NCBI37,length=174588,species=Human>
+##contig=<ID=GL000219.1,assembly=NCBI37,length=179198,species=Human>
+##contig=<ID=GL000224.1,assembly=NCBI37,length=179693,species=Human>
+##contig=<ID=GL000223.1,assembly=NCBI37,length=180455,species=Human>
+##contig=<ID=GL000195.1,assembly=NCBI37,length=182896,species=Human>
+##contig=<ID=GL000212.1,assembly=NCBI37,length=186858,species=Human>
+##contig=<ID=GL000222.1,assembly=NCBI37,length=186861,species=Human>
+##contig=<ID=GL000200.1,assembly=NCBI37,length=187035,species=Human>
+##contig=<ID=GL000193.1,assembly=NCBI37,length=189789,species=Human>
+##contig=<ID=GL000194.1,assembly=NCBI37,length=191469,species=Human>
+##contig=<ID=GL000225.1,assembly=NCBI37,length=211173,species=Human>
+##contig=<ID=GL000192.1,assembly=NCBI37,length=547496,species=Human>
+##contig=<ID=NC_007605,assembly=NCBI37,length=171823,species=Human>
+##contig=<ID=hs37d5,assembly=NCBI37,length=35477943,species=Human>
+##fileDate=20190206
+##reference=/lustre/scratch119/casm/team78pipelines/canpipe/live/data/analysis/1959_2756657/CaVEMan/genome.fa
+##source_20190210.1=AnnotateVcf.pl
+##vcfProcessLog=<InputVCF=<.>,InputVCFSource=<CaVEMan>,InputVCFParam=<PRIOR_SNP_RATE=0.0001,REF_BIAS=0.95,MUT_CUTOFF=0.8,NORMAL_CONTAMINATION=0.1,PRIOR_MUT_RATE=6e-06,SNP_CUTOFF=0.95>>
+##vcfProcessLog_20190210.1=<InputVCF=<split.vcf.1>,InputVCFSource=<FlagCaVEManVCF.pl>,InputVCFVer=<1.7.3>,InputVCFParam=<sp=.,umv=unmatched_v4,h=.,g=2756657.germline.bed.gz,f=split.vcf.1,t=WGS,loud=.,n=2714073.bam,ref=genome.fa.fai,m=2756657.bam,v=flag.to.vcf.convert.ini,s=HUMAN,l=2000,ab=.,p=5069220,c=flag.vcf.config.ini,b=flagging,idx=.,o=flagged_split.vcf.1>>
+##vcfProcessLog_20190210.2=<InputVCF=<>,InputVCFSource=<AnnotateVcf.pl>,InputVCFVer=<3.3.3>,InputVCFParam=<input=/lustre/scratch119/casm/team78pipelines/canpipe/live/data/analysis/1959_2756657/Vagrent_CaVEMan/PD40870b_lo0309.gz,species=Human,output=/lustre/scratch119/casm/team78pipelines/canpipe/live/data/analysis/1959_2756657/Vagrent_CaVEMan/PD40870b_lo0309.vcf,tabix=1,cache=/lustre/scratch119/casm/team78pipelines/canpipe/live/ref/human/GRCh37d5/vagrent/e75/vagrent.cache.gz,assembly=NCBI37>>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NORMAL	TUMOUR
+1	817622	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	3153883	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+1	6644063	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	10170429	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+1	11962508	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	18513208	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+1	21852398	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+1	34070297	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	38516145	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	51880944	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+1	52993374	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+1	63043386	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+1	67151137	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	73761938	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+1	75292556	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+1	77742085	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+1	78744392	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+1	79018648	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	82715670	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	86574864	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+1	92747597	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	97069334	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	98105125	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+1	98921764	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+1	105012922	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+1	115922712	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+1	146980505	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+1	149101001	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+1	154667213	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	155192275	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+1	155201307	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+1	160029572	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	160101894	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	163657634	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	168535906	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+1	170332060	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	172246063	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+1	173607825	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	175893255	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+1	176575683	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	176843941	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	178007194	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	180877542	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	184223537	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	193211212	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+1	194728097	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+1	195236627	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	195408107	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	196680782	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+1	197000273	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	204307051	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	207926119	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	208708066	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+1	209619450	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	211242315	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	211896737	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	214417535	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+1	219766380	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+1	221054210	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+1	232672382	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+1	241699653	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	248244865	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+1	248635067	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+2	5194998	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	6459606	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	7703641	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	9973569	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	20114040	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+2	20993284	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+2	22261659	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+2	22877172	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	24904879	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	27132737	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	27997746	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	31511385	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	45523851	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+2	47415546	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+2	48290201	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	53439383	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+2	57428510	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	66969230	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+2	71074117	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	73406779	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	77430097	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	79237345	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	79389911	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+2	80270571	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	81037039	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	82547887	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+2	88648683	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	90114751	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	102513527	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	103328665	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+2	103785182	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+2	105571090	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+2	108262266	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	115544555	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	116892636	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	118556370	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	119853874	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+2	122384131	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	122538831	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+2	122754717	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	122754724	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+2	125570754	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	126108816	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	127901675	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	130205504	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+2	131925992	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	139801300	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	140829462	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+2	141759491	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+2	147348857	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+2	148632766	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	152573179	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+2	152729852	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	161472646	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	162341203	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+2	163920845	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+2	168126449	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	172369979	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	176833030	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	177111414	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	177301347	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	178331024	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+2	181793361	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+2	183778208	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	183941191	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+2	185253585	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	188362375	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	195954286	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	196930129	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	198796030	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+2	200949878	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	212518814	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	215213243	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	215435532	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	224261562	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+2	225230373	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+2	225682092	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+2	228590582	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+2	228837771	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	231513207	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+2	234555048	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+2	235639869	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	239088720	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+2	240180107	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+2	240414208	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	8747380	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+3	9370309	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+3	9674606	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+3	11197632	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	12024401	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	14233998	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	24864100	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+3	26316773	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+3	27836711	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	35483273	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+3	35869251	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	39955614	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+3	44472615	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+3	45618127	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+3	50417866	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	56847171	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+3	57966551	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	58655037	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	62437134	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+3	65577427	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+3	81022175	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+3	81534828	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+3	82078021	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+3	84695308	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	85746469	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+3	89218789	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+3	94385761	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+3	100773725	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+3	102205662	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	103028149	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+3	105195439	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	106797081	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+3	107611005	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+3	108419779	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+3	111129228	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	117614190	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	117980855	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+3	118188772	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	129879064	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	133580016	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	134603330	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	134885460	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+3	135675517	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	135962548	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+3	137002538	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	138157727	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+3	139525073	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	145694106	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	152376735	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+3	153912380	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+3	155987804	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	159878023	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+3	162270226	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	164018519	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+3	164804812	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+3	166848939	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+3	167922075	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+3	169765145	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+3	181000646	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+3	191563371	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	4384909	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	5942793	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	9948292	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	12666524	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	16299040	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	18332232	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	22992036	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	24107197	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	25596215	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+4	29085579	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	29249512	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	33165057	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	33363319	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+4	34501716	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	39207873	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	45297308	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	45853292	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+4	55234434	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	58613715	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	59864315	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	61491382	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	63901100	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	64234183	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	64985372	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	73107475	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	74771645	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	75542788	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	78898990	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	84481358	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	85026991	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	88333260	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	91575777	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	94006135	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+4	99258228	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+4	99531604	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+4	99940881	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	111408874	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	111428042	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	115199367	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	115791780	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	115793204	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	115793205	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	116093411	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+4	120031090	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	130170423	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+4	131001926	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	132651906	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	133707386	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	135727938	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	135727939	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+4	135809007	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	136188154	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	136932436	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	138754514	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	139739941	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	143208874	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+4	147746407	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	152921194	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	159815896	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	161549194	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	161627510	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	161826575	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+4	162040382	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	162388960	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	163024373	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	163024392	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+4	164632569	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	165682809	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	166078732	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	169354454	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+4	172173911	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	172477418	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+4	173437060	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	176518829	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	178803871	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+4	178935796	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+4	179080291	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	181178197	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+4	181289217	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	181831118	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+4	181850996	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+4	181904482	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	181906113	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+4	182415519	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+4	183557362	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+5	124377	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	1378314	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	3339978	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	4158776	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+5	4210240	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	6954757	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	13289855	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	20454990	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	21146568	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	22288207	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	24363553	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	24758843	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	24933953	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	25144418	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+5	25149413	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	25828285	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+5	28729685	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	30082940	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+5	30768323	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	34140494	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+5	40370775	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	43926929	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	44018677	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	49567836	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	54696293	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	65787405	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+5	66808822	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	78024376	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+5	82511699	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+5	85596941	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+5	85752019	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+5	85957218	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	88033470	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	91007869	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	94428464	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+5	95659205	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	97067129	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+5	100464192	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+5	101714251	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+5	112862249	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	116826714	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	116969694	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+5	117125398	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+5	120650493	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	121839609	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	122223373	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+5	125718810	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	130125385	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	131368083	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	135826890	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+5	140926390	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	142152630	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+5	146377068	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	149641511	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+5	153019210	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+5	155828080	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	159454440	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+5	160024268	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+5	160124101	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+5	160698831	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+5	165761669	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+5	171067377	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+6	2043773	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	2912583	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	4197112	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	5568287	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	9830376	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+6	15575130	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	17406476	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+6	18336234	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	23020585	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	23724118	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+6	29003929	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	33127966	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	35216541	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	36683884	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	38625303	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	45723451	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	48055970	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+6	48816406	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	51990034	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	54081611	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	57758560	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	64659970	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	65884728	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	66578348	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	66659934	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	72227023	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	72331570	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	72668317	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+6	75787251	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	78771019	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	80177201	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+6	83458733	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	86372205	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	87328273	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	87810543	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	93648077	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+6	94219389	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+6	95393888	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+6	98653691	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	103610983	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	104278593	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	106066708	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+6	112016689	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	112862075	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+6	114319935	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+6	115245479	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+6	120792874	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	123990803	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	124383288	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	126045553	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	126793783	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	127330078	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	129317500	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	130641296	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	131175446	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+6	132640708	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+6	135676203	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+6	137698685	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	145714029	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+6	152289061	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+6	153988900	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	154863756	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+6	160286695	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+6	161811163	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+6	161844708	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+6	166765585	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+6	168099310	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+6	169111258	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+7	13003539	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+7	15060491	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	20861194	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+7	24300334	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+7	25312430	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	27361798	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+7	29547701	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	34778456	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	35619312	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+7	37212922	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	37670657	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	45235440	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	47709365	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+7	48622032	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+7	51735056	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	53718479	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+7	57733046	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+7	63946436	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	65383524	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+7	66570045	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	71149825	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+7	71279753	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	80049011	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	81075405	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+7	87163375	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+7	90175302	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+7	90222226	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+7	94730013	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+7	98533826	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+7	101437469	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	106046210	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	110766247	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+7	119764884	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	122277957	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	123430911	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	124121067	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	125477708	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	126349636	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+7	126713655	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	129902154	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+7	136566919	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	137116055	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+7	137121653	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+7	137306033	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+7	142668369	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+7	143718504	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+7	147165582	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	147736212	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+7	151174861	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+7	155560864	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+8	2648826	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	3104087	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	3248571	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	3944374	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	4024127	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+8	5801856	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+8	5966241	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+8	6318736	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+8	6325275	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	17755465	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	30360151	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+8	30694298	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	31478350	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+8	32841375	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+8	33781523	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+8	34497250	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	35908880	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+8	43182264	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	50641790	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+8	53699927	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	56315504	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	63662395	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+8	72870028	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+8	73234276	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+8	76024762	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	77752717	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	78432032	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	78782965	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+8	79059502	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	84445857	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	87002627	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	88021322	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+8	88249675	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+8	93667518	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+8	96159122	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+8	100626376	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	104773170	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+8	105174501	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+8	109547669	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	111632854	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	113026420	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	113553731	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+8	114632978	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+8	115280294	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+8	118013559	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+8	125413292	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	135211168	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	136352220	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	138802897	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+8	141038860	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	143889582	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+8	144496234	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+9	446535	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+9	5067166	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+9	7232920	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+9	9387722	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+9	12152730	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+9	18254998	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+9	20608408	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+9	21393242	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+9	31295087	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+9	33373632	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+9	73814855	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+9	74501787	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+9	78340833	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+9	79006192	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+9	81320891	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+9	84917287	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+9	85107308	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+9	86923939	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+9	94306004	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+9	95133492	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+9	103010198	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+9	105017736	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+9	106718087	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+9	106992267	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+9	113550689	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+9	114366262	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+9	114478828	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+9	121556951	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+9	127870652	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+9	129576982	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	10849544	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+10	11943138	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	24033097	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	28353614	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+10	30889263	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+10	37431377	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+10	45308059	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	46096507	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	50803817	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	50960367	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	51015079	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+10	53280634	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	56171899	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+10	59378856	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+10	64773664	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	71110245	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	72386886	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	82751064	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+10	84123458	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+10	84792263	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+10	97937401	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	98991130	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+10	105214320	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	106562745	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	107232459	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+10	109183179	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+10	111429693	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+10	111429896	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	112641922	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+10	112826790	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	112978557	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+10	113747262	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	117949493	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	130429721	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+10	130887548	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+10	135052047	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	4881798	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	6853899	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+11	21561098	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+11	21809143	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+11	23152502	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+11	24701462	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	25466647	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+11	27223674	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+11	32450507	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	37678268	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	40403337	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+11	42514074	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+11	44720448	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	50179387	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+11	55501433	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	56325696	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+11	56954756	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+11	65125195	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	70005901	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	74065336	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+11	75038800	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+11	76034968	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	77713517	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+11	78299566	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+11	79899291	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+11	82575444	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	84209483	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+11	85339403	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	86600059	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+11	90354216	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	91054431	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	94252925	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+11	96200474	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+11	97934095	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	99650991	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+11	101012269	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+11	103300590	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+11	105202659	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+11	105650070	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+11	105713732	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+11	114822970	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	119419698	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+11	119483007	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	122269404	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+11	122513171	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+11	125354611	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+11	132697800	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+11	134110524	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+11	134436129	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	4982672	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+12	6745469	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+12	6745470	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	6749708	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	7814815	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	13737387	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	17794341	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+12	20515532	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+12	22284425	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+12	24553219	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	28297190	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	39672646	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	40148554	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+12	43782891	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	44238234	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+12	51687237	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	52185387	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+12	60205642	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+12	60851105	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+12	62086947	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+12	63504367	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+12	66186492	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+12	74769783	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	74829126	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	81843525	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	91848214	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+12	92549207	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	97782229	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+12	98656575	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+12	99919105	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	101572953	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	103697915	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	105995232	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+12	107038690	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+12	110254714	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	114113241	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	114663289	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	115055009	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	118458677	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	122353488	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+12	129168993	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+12	129244658	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+12	131184015	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+13	19273252	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+13	19378041	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	26014047	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+13	26420238	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	26965740	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+13	30243301	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+13	32570437	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+13	37606262	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+13	39431713	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+13	40406956	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+13	40708630	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+13	40983489	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+13	47768625	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+13	47768628	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+13	51897519	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+13	54386428	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	56452886	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+13	56511056	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	56776268	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+13	57996954	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	58736031	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+13	58988348	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+13	59134400	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	60195932	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+13	62853796	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+13	64653895	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+13	65915973	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+13	71798590	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	77017742	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+13	78208405	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+13	78846253	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+13	86708332	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+13	91447093	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+13	91496602	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	99557774	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	101970814	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+13	104029343	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+13	106744434	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	107991144	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+13	108179151	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+13	108671498	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+14	22100427	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+14	29470679	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	35763616	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	35997840	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+14	36788116	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+14	37261825	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	39010157	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	40754065	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	41747503	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	43576059	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	46139084	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+14	55051343	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	55794818	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	58013202	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	59078469	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	59101092	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	70998836	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+14	73259173	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+14	84145930	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	86302498	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+14	89237385	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	96426389	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+14	97656107	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+14	98256031	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+14	98898657	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+15	20150856	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+15	23664861	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+15	24140198	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+15	24403183	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+15	27078052	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+15	30295132	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+15	32024879	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+15	51668216	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+15	53049924	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+15	61232870	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+15	62857993	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+15	76223008	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+15	77737727	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+15	78108602	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+15	87241759	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+15	97041138	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+15	97891679	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+15	98760324	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+16	507172	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+16	2596309	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+16	5471724	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+16	5612641	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+16	10313112	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+16	13266512	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+16	13361011	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+16	14565029	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+16	18039457	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	21001397	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+16	24085149	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+16	24103898	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+16	26081141	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+16	26178037	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+16	26857389	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+16	29213502	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+16	29585951	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+16	30405976	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+16	31843419	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+16	33468661	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	50367748	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	50636428	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	57537605	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+16	59874075	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+16	61117847	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+16	63588543	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	64705228	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	69166938	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+16	69709963	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+16	73783800	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+16	84396700	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	C	.	PASS
+16	86688502	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+17	9426878	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+17	13664659	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+17	18088377	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+17	26519931	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+17	28830176	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+17	33427724	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+17	36757384	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+17	62314485	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+17	63350076	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+17	70175507	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+18	2882674	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+18	10570357	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+18	10824564	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+18	13913124	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+18	14225889	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+18	15228198	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+18	19063885	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+18	19959724	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+18	25493771	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+18	30863122	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+18	33371781	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+18	38370254	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+18	44000344	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+18	49436634	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+18	49814977	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+18	54825111	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+18	58812056	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+18	63947504	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+18	63983474	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+18	64382749	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+18	65130727	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+18	67526717	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+18	69661435	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+18	70664928	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+18	77839956	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+18	77982036	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+19	10232802	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+19	11527131	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+19	13062724	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+19	15497995	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+19	20894317	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+19	30016222	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+19	34256591	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+19	40347123	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+19	41409768	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+19	42160646	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+19	43398254	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+19	50563629	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	G	.	PASS
+19	54134304	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+20	776624	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+20	2315647	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+20	7441701	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+20	14997597	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+20	15801654	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+20	16946929	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+20	18206401	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+20	19220786	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+20	20735811	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+20	20883533	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+20	21068618	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+20	21421946	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+20	30247068	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+20	35867756	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+20	40709392	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+20	41862549	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	C	.	PASS
+20	47479093	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+20	49542458	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+20	51801565	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+20	52697391	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+20	60000403	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+20	60004940	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+20	61021861	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+21	20341789	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+21	20912552	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+21	24954689	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+21	28363002	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+21	29142258	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+21	30917722	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+21	31237147	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+21	31241631	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+21	32012494	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+21	40693400	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+22	17859062	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+22	23404546	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+22	23693426	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+22	30677741	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+22	33249061	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+22	37088972	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+22	45716516	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	G	.	PASS
+22	49805970	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+X	1978466	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+X	5349356	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	16686529	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+X	25003012	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+X	33560143	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	36047061	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+X	51681719	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+X	57751864	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+X	78524841	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+X	78524960	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	78525147	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	78945523	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+X	86863469	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+X	87174954	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+X	97881840	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	A	.	PASS
+X	98490595	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+X	110607828	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+X	114775743	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	116509986	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+X	121697152	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	125417728	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	A	T	.	PASS
+X	126544932	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+X	132732287	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	G	.	PASS
+X	135380782	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	T	C	.	PASS
+X	136342382	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	142206853	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	T	.	PASS
+X	142246313	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	T	.	PASS
+X	149351373	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	C	A	.	PASS
+X	150667207	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
+Y	16540929	2d31f2f0-2a44-11e9-87ab-3d6f8335f2dd	G	A	.	PASS
