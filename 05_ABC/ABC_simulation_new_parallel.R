@@ -123,8 +123,8 @@ estimate_gamma_params=function(value_vec,log_rate_range=c(-2,1),shape_range=c(1,
 }
 
 
-# Step 1: Define directories & import the 3 phylogenies ----------------------------------------
-# Import 3 phylogenies - older phylogenies correspond to the 4 used to estimate the parameters of the PVVs
+# Step 1: Define directories & import the 4 phylogenies ----------------------------------------
+# Import 4 phylogenies - older phylogenies correspond to the 4 used to estimate the parameters of the PVVs
 my_working_dir=ifelse(Sys.info()['sysname']=="Darwin","~/Mounts/Lesion_Seg/ABC_new","/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/ABC_new")
 setwd(my_working_dir)
 

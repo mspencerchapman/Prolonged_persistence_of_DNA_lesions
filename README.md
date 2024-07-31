@@ -13,11 +13,14 @@ data/simulation_results/MAV_sim_results.tsv
 
 # Notes on specific stages of data generation
 
-## 01 Running the core algorithm
-sdf
+## 01_Running the core algorithm
+This includes the core analysis script 'Detect_persistent_lesions.R' which is designed to be set off via the command line.  There are several options to point to the necessary input files, and flags to force re-analysis, remove duplicates, and to include a dummy ancestral branch (should be used if there is such a branch in the provided tree).
+The file Setting_off_persistent_lesion_analysis.sh contains the code to set off the analysis script for the different datasets in the study.
+If trying to run on your own data you may need to edit the script to account for the format of your data.
 
-## 02 Phasing and LOH analysis
-The scripts provided here allow this to be re-run locally, or better, on a compute farm with parallel computing capability. All input data & scripts are provided.
+## 02_Phasing and LOH analysis
+The scripts provided here show how the phasing and LOH analyses were performed.
+There is a core phasing script underlying this - this is run in julia and will require considerable tweaking to get functioning locally as there are multiple fixed file paths.
 
 ## 03 Comipiling fitered mutation list
 This is a single script that takes the data from the previous two stages, as well as a comprehensive list of sample metadata to generate the final set of data objects for all downstream analyses.
@@ -29,30 +32,34 @@ A selection of scripts that run various simulations:
 - PVV_simulation_reversion_2.R; script to model somatic reversion events as a possible cause of phylogeny-violating variants
 - Tree_structure_PVV_sensitivity_2.R; script to model the proportion of introduced lesions that would be anticipated to be detected given the phylogeny structure
 
+Note that the output from these scripts is provided in the github repo in Data/simulation_results
+
 ## 05 ABC (Approximate Bayesian Computation)
-These scripts are written in julia. They need to be run on data using the three separate baitsets individually. This is because for each baitset, the samples coming from different individuals to the one in which the mutation was called are used to estimate the locus-specific sequencing error rates.
+All the scripts required to run the ABC - these need to be run in the correct order (as below). Lesion_duration_ABC_new.sh contains the commands to set off the jobs on the command line.
+
+1. generate_simpops.R - each run of this script will generate a simulated population like the 40 used in the ABC. Run with the index of the simulation as a trailing argument i.e. Rscript generate_simpops.R 13
+2. ABC_simulation_new_INTRODUCE_LESIONS.R - introduce lesions into each simulated population. This takes two trailing arguments (1) the index of the simpop to introduce lesions into and (2) the mean duration of the introduced lesions (in years).
+3. ABC_simulation_new_INTRODUCE_LESIONS_BOOST.R - a script to see if there are sufficient PVVs generated from the first run of lesion generation, and introduce additional lesions if not.
+4. ABC_simulation_new_parallel.R - script for the main simulation of the ABC.
 
 ## 06 Generating Figures
-These scripts must be run on a compute farm, and use nextflow for job submission.
-While they are set up for submission on LSF, they could readily be adapted to other systems.
+Individual scripts to generate all the figures/ extended data figures from the manuscript. All the data for the figures is available from the github/ Mendeley data without having the re-run all the previous steps.
 
 
 # OTHER FOLDERS
 ## Original analysis scripts
-These are the original scripts used to analyse the data. They are not quite as 'tidy' as those within the '05 Generating_figures/' folder, and much of this is duplications of the same analyses. However, some scripts contain code for some additional plots and analyses that are not included in the manuscript and are therefore included for reference.
+These are the original scripts used to analyse the data. They are not quite as 'tidy' as those within the '06_Generating_figures/' folder, and much of this is duplications of the same analyses. However, some scripts contain code for some additional plots and analyses that are not included in the manuscript and are therefore included for reference.
 
-## Other simulation scripts
-Simulation scripts used for analyses other than the main 'engrafting cell number' ABC.
-This includes:
-1. estimating the phylogenetic age \
-2. estimating the effect that increased T-cell clone longevity may have on clonal composition relative to the myeloid fraction
+## Miscellaneous scripts
 
-## data
-data/reference_files/ - includes reference files used in various analyses \
-data/metadata_files/ - includes individual-level metadata, and sample-level metadata \
-data/tree_and_mutation_files/ - includes all saved objects relating to tree structures or mutation information from the WGS \
-data/SV_and_CNA_data/ - includes summaries of structural variants and copy number alterrations from GRIDSS and ASCAT. Loss-of-Y information is derived from the mean coverage data. \
-data/HDP/ - data files relating mutational signature extraction with HDP \
-data/APOBEC_VCFs - vcf files containing only the likely APOBEC mutations from branches affected by APOBEC/ \
-data/targeted_sequencing_data - raw and inferred data related to the targeted sequencing. The 'data_by_baitset' folder includes \
-data/ABC_simulation_results - the posterior results from the models with different ABCs
+## Plots
+This is where all plots from the figure generation scripts are saved.
+
+## Data
+Data/reference_files/ - includes reference files used in various analyses \
+Data/metadata_files/ - includes individual-level metadata, and sample-level metadata \
+Data/VCFs/ - includes mutation VCFs generated in/ required for various mutational signature analyses \
+Data/ASCAT_LOH_analysis/ - results of the ASCAT and LOH scripts in the folder 02_Phasing and LOH analysis/ \
+Data/phasing_results/ - results of the phasing scripts in the folder 02_Phasing and LOH analysis/ \
+Data/lesion_segregation_analysis/ - includes intermediate data from lesion segregation analysis as this is very time-consuming \
+Data/ABC_results/ - includes intermediate data from the ABC simulations to allow the ABC to be re-run and the plots generated\
