@@ -4602,7 +4602,7 @@ plot_192_profile_single_context=function (mut_matrix, select_context="C>T",col =
 
   plot <- ggplot(data = tb%>%filter(substitution==select_context), aes(x = context, y = freq, 
                                   fill = substitution, width = width, alpha = strand)) + 
-    geom_bar(stat = "identity", colour = "black", size = 0.2) + 
+    geom_bar(stat = "identity", colour = "#D1D3D4", linewidth = 0.1) + 
     scale_alpha_discrete(range = c(0.1, 1)) +
     scale_fill_manual(values = col) +
     facet_grid( ~ substitution) +

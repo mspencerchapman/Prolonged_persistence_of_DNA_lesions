@@ -84,8 +84,8 @@ names(myLOHColors)<-c("LOH","Unable to confirm","No LOH","Homozygous in all clad
 
 ## Generate Extended Data Figure 5a ------
 p.LOH.readbased<-PVV_mutations%>%
-  mutate(ASCAT_result=factor(ASCAT_result))%>%
   filter(!is.na(lesion_node))%>%
+  mutate(ASCAT_result=factor(ASCAT_result))%>%
   mutate(basic_result=factor(basic_result))%>%
   mutate(cat=stringr::str_replace(cat,pattern = "_",replacement = "\n"))%>%
   dplyr::count(basic_result,cat)%>%
@@ -107,7 +107,8 @@ ggsave(p.LOH.readbased,filename=paste0(plots_dir,"ExtDatFig5a.pdf"),width=2,heig
 
 ## Generate Extended Data Figure 5b ------
 p.LOHvsASCAT<-PVV_mutations%>%
-  filter(!is.na(lesion_node) & !is.na(basic_result) &!ASCAT_result=="Need at least 2 pure positive AND 1 pure negative clade to be within the lesion node: one or both not detected" &
+  filter(!is.na(lesion_node) &
+           !ASCAT_result=="Need at least 2 pure positive AND 1 pure negative clade to be within the lesion node: one or both not detected" &
            max_neg_clade_depth>=13)%>%
   dplyr::select(ASCAT_result,basic_result)%>%
   mutate(ASCAT_result=ifelse(ASCAT_result=="Homozygous in all clades","No LOH",ASCAT_result))%>%
@@ -120,7 +121,7 @@ p.LOHvsASCAT<-PVV_mutations%>%
   geom_text(aes(label = Freq), vjust = 1)+
   coord_flip()+
   my_theme+
-  labs(x="Read-based result",y="ASCAT result")+
+  labs(y="Read-based result",x="ASCAT result")+
   theme(legend.key.size = unit(5,"mm"))
 
 ggsave(p.LOHvsASCAT,filename=paste0(plots_dir,"ExtDatFig5b.pdf"),width=3,height=2)

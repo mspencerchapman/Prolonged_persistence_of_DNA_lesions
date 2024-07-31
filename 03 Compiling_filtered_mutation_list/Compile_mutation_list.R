@@ -381,4 +381,5 @@ PVV_mutations%>%
   filter(ASCAT_result!="LOH"& basic_result!="LOH")%>%
   filter(max_neg_clade_depth>=13)%>%
   filter(!mut_ref1%in%artefactual_muts)%>%
-  nrow()
+  group_by(Mut_type1)%>%
+  summarise(n=n())

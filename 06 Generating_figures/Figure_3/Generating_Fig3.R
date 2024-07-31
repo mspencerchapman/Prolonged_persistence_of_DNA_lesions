@@ -300,7 +300,7 @@ vcfs=read_vcfs_as_granges(vcf_files = c(BloodPVV_vcf_path,ChemoPVV_vcf_path),sam
 
 ## Generate Figure 3c ------
 mut_mat=mut_matrix(vcfs,ref_genome = ref_genome)
-  p.PVV.1.1<-plot_96_profile(mut_mat[,c("Blood PVVs","Chemo PVVs")],ymax=0.32)+sig_theme
+p.PVV.1.1<-plot_96_profile(mut_mat[,c("Blood PVVs","Chemo PVVs")],ymax=0.32)+sig_theme
 ggsave(p.PVV.1.1,filename = paste0(plots_dir,"Fig3c.pdf"),width=7,height=2.5)
 
 ## Generate Figure 3d ------
@@ -325,7 +325,7 @@ write.vcf(details,vcf_path = PX001_all_VCF_path,vcf_header_path = vcf_header_pat
 indel_vcfs=read_vcfs_as_granges(vcf_files = c(ChemoPVV_vcf_path,PX001_all_VCF_path),sample_names = c("Chemo PVVs","Overall chemo sig."),genome=ref_genome,type="indel")
 indel_vcfs<-get_indel_context(indel_vcfs,ref_genome=ref_genome)
 indel_counts <- count_indel_contexts(indel_vcfs)
-p.indelPVV.1.1<-plot_indel_contexts(indel_counts[,c("Chemo PVVs","Overall chemo sig.")])+sig_theme+theme(panel.spacing.x = unit(0.1,"lines"),legend.title = element_blank())+labs(x="Sequence context (count of repeat units)",y="Number of indels")
+p.indelPVV.1.1<-plot_indel_contexts(indel_counts[,c("Chemo PVVs","Overall chemo sig.")])+sig_theme+theme(panel.spacing.x = unit(0.1,"lines"),legend.title = element_blank(),panel.grid = element_blank())+labs(x="Sequence context (count of repeat units)",y="Number of indels")
 ggsave(p.indelPVV.1.1,filename = paste0(plots_dir,"Fig3e.pdf"),width=7,height=2.5)
 
 
