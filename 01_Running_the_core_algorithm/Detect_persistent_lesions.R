@@ -1,26 +1,42 @@
-#!/software/R-3.6.1/bin/Rscript
-library(stringr)
-library(ape)
-library(seqinr)
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(phangorn)
-library(optparse)
-library(parallel)
-library("GenomicRanges")
-library("Rsamtools")
-library("MASS")
-options(stringsAsFactors = F)
+#========================================#
+# Load packages (and install if they are not installed yet) ####
+#========================================#
+cran_packages=c("stringr","ape","seqinr","tidyr","dplyr","ggplot2","phangorn","optparse","parallel","MASS")
+bioconductor_packages=c("GenomicRanges","IRanges","Rsamtools")
+
+for(package in cran_packages){
+  if(!require(package, character.only=T,quietly = T, warn.conflicts = F)){
+    install.packages(as.character(package),repos = "http://cran.us.r-project.org")
+    library(package, character.only=T,quietly = T, warn.conflicts = F)
+  }
+}
+if (!require("BiocManager", quietly = T, warn.conflicts = F))
+  install.packages("BiocManager")
+for(package in bioconductor_packages){
+  if(!require(package, character.only=T,quietly = T, warn.conflicts = F)){
+    BiocManager::install(as.character(package))
+    library(package, character.only=T,quietly = T, warn.conflicts = F)
+  }
+}
+if(!require("treemut", character.only=T,quietly = T, warn.conflicts = F)){
+  install_git("https://github.com/NickWilliamsSanger/treemut")
+  library("treemut",character.only=T,quietly = T, warn.conflicts = F)
+}
+options(stringsAsFactors = FALSE)
+
+#========================================#
+# Parse the options list (using optparse) ####
+#========================================#
 
 option_list = list(
-  make_option(c("-w", "--working_dir"), action="store", default=NULL, type='character', help="Working directory for analysis, if not set will default to the current directory"),
-  make_option(c("-s", "--sample_id"), action="store", default='unspecified', type='character', help="Sample ID"),
-  make_option(c("-t", "--tree_path"), action="store", default=NULL, type='character', help="path for the mats and params file, if not set will default to the usual filename within the output directory"),
-  make_option(c("-f", "--filtering_muts_path"), action="store", type='character', help="path for the filtered_muts file"),
-  make_option(c("-a", "--ancestral"), action="store_true", default=FALSE, type='logical', help="Input trees contain an ancestral tip"),
+  make_option(c("-w", "--working_dir"), action="store", default=NULL, type='character', help="Working directory for analysis - should be set to the cloned github directory. If not set will default to the current directory"),
+  make_option(c("-s", "--sample_id"), action="store", default='unspecified', type='character', help="Sample ID to include in output file names"),
+  make_option(c("-t", "--tree_path"), action="store", default=NULL, type='character', help="path for the tree file - mandatory"),
+  make_option(c("-f", "--filtering_muts_path"), action="store", type='character', help="path for the filtered_muts file - mandatory, and needs to be in a very specific structure"),
+  make_option(c("-g", "--genome_file"), action="store", default='/nfs/cancer_ref02/human/GRCh37d5/genome.fa',type='character', help="path to the relevant genome file"),
+  make_option(c("-a", "--ancestral"), action="store_true", default=FALSE, type='logical', help="Set this flag if input trees contain an ancestral tip"),
   make_option(c("-d", "--duplicate_remove"), action="store_true", default=FALSE, type='logical', help="Remove any duplicate samples that are present"),
-  make_option(c("-r", "--re_run"), action="store_true", default=FALSE, type='logical', help="Remove any duplicate samples that are present"),
+  make_option(c("-r", "--re_run"), action="store_true", default=FALSE, type='logical', help="Force rerun of TREEMUT and the PVV assessment, even if conditions are met for re-importing existing intermediate files"),
   make_option(c("-c", "--cores"), action="store_true", default=1, type='numeric', help="Number of cores to use"),
   make_option(c("-o", "--output_dir"), action="store", default="/lustre/scratch119/casm/team154pc/ms56/lesion_segregation/output", type='character', help="output directory for files")
 )
@@ -28,12 +44,16 @@ opt = parse_args(OptionParser(option_list=option_list, add_help_option=FALSE))
 
 print(opt)
 
+#========================================#
+# Set various variables from the options list ####
+#========================================#
 
 #Set file paths and script options from command args
-if(!is.null(opt$w)) {my_working_directory = opt$w} else {my_working_directory<-getwd()}
+if(!is.null(opt$w)) {root_dir = opt$w} else {root_dir<-getwd()}
 sampleID=opt$s
 tree_file_path = opt$t
 filtered_muts_file = opt$f
+genome_file=opt$g
 output_dir=opt$o
 include_ancestral_tip=opt$a  #Does your tree include an ancestral tip that you want to keep in the analysis?
 remove_duplicates=opt$d
@@ -41,17 +61,8 @@ MC_CORES=opt$c
 re_run=opt$r
 print(paste(MC_CORES,"cores available"))
 
-R_scripts_dir = "/lustre/scratch119/casm/team154pc/ms56/my_functions"
-treemut_dir="/lustre/scratch119/casm/team154pc/ms56/fetal_HSC/treemut"
-genome_file="/nfs/cancer_ref02/human/GRCh37d5/genome.fa"
-
+functions_file=source(paste0(root_dir,"Data/Prolonged_persistence_functions.R"))
 filter_output_df_file=paste0(output_dir,"/",sampleID,"_filter_df.tsv")
-
-#Import functions/ files
-setwd(my_working_directory)
-R_function_files = list.files(R_scripts_dir,pattern=".R",full.names=TRUE)
-sapply(R_function_files[-2],source)
-setwd(treemut_dir); source("treemut.R"); setwd(my_working_directory)
 
 #Load up the objects, and pull out the details data frame and the NV and NR matrices
 print("Loading the tree and converting to multifurcating structure")
@@ -64,9 +75,8 @@ NV = as.matrix(filtered_muts$COMB_mats.tree.build$NV)
 NR = as.matrix(filtered_muts$COMB_mats.tree.build$NR)
 
 #Re-derive the res object & put the pval and node into the table
-if(!all(c("node","pval")%in%colnames(details))|sum(tree$edge.length)!=nrow(details)|any(!details$node%in%tree$edge[,2])) {
+if(re_run|!all(c("node","pval")%in%colnames(details))|sum(tree$edge.length)!=nrow(details)|any(!details$node%in%tree$edge[,2])) {
   print("Reassigning mutations to branches using the treemut package")
-  df = reconstruct_genotype_summary(tree) #Define df (data frame) for treeshape
   if(!include_ancestral_tip) {
     p.error = c(rep(0.01, ncol(filtered_muts$COMB_mats.tree.build$NR)))
   } else if (include_ancestral_tip) { #If the tree includes an ancestral tip, add in a dummy ancestral sample to the NV, NR and p.error objects
@@ -74,7 +84,7 @@ if(!all(c("node","pval")%in%colnames(details))|sum(tree$edge.length)!=nrow(detai
     NR<-cbind(NR,"Ancestral"=rep(10,nrow(NR)))
     p.error = c(rep(0.01, ncol(filtered_muts$COMB_mats.tree.build$NR)),1e-6)
   }
-  res = assign_to_tree(NV[,df$samples], NR[,df$samples], df, error_rate = p.error) #Get res (results!) object
+  res = assign_to_tree(tree=tree,mtr=NV[,tree$tip.label], depth=NR[,tree$tip.label], error_rate = p.error) #Get res (results!) object
   details$node <- tree$edge[res$summary$edge_ml,2]
   details$pval <- res$summary$pval
   
@@ -213,7 +223,7 @@ if(sum(filter_res)>0) {
     initial_lesion_timing=nodeheight(tree,initial_lesion_node)
     pure_subclades=get_pure_subclades(mut1 = mut, lesion_node = initial_lesion_node,tree=tree,matrices=list(NV=NV,NR=NR))
     if(any(pure_subclades=="More than one mixed subclade identified - indicative that not caused by a persistent DNA lesion")|
-       pure_subclades=="Not PVV"){next}
+       any(pure_subclades=="Not PVV")){next}
     #Now get the earliest time that the lesion may have been repaired
     #1. get daughter nodes of lesion node
     if(poor_fit_df$Mut_type1[i]!="SNV") {
