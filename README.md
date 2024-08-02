@@ -35,12 +35,20 @@ A selection of scripts that run various simulations:
 Note that the output from these scripts is provided in the github repo in Data/simulation_results
 
 ## 05 ABC (Approximate Bayesian Computation)
-All the scripts required to run the ABC - these need to be run in the correct order (as below). Lesion_duration_ABC_new.sh contains the commands to set off the jobs on the command line.
+All the scripts required to run the ABC - these need to be run in the correct order (as below).
+Lesion_duration_ABC_new.sh contains the commands to set off the jobs on the command line (using LSF) in the correct order.
 
 1. generate_simpops.R - each run of this script will generate a simulated population like the 40 used in the ABC. Run with the index of the simulation as a trailing argument i.e. Rscript generate_simpops.R 13
 2. ABC_simulation_new_INTRODUCE_LESIONS.R - introduce lesions into each simulated population. This takes two trailing arguments (1) the index of the simpop to introduce lesions into and (2) the mean duration of the introduced lesions (in years).
 3. ABC_simulation_new_INTRODUCE_LESIONS_BOOST.R - a script to see if there are sufficient PVVs generated from the first run of lesion generation, and introduce additional lesions if not.
-4. ABC_simulation_new_parallel.R - script for the main simulation of the ABC.
+4. ABC_simulation_new_parallel.R - script for the main simulation of the ABC. Designed to run with 4 cores with analysis for the four phylogenies running in parallelel. Each run of the simulation typically takes ~24hours.
+5. ABC_new_extract_info.R - scripts to extract the pertinent lesion info from each simulation, generate the summary statistics and then run the ABC. This is mostly duplicated in the script: 'Generate_Fig5a.R' and ' Generate_ExtDatFig11.R'
+
+ABC_new_GROUND_TRUTH.R - extracts the data from the 'ground truth' simulations to assess the accuracy of the approach
+ABC_new_PPCs_extract_info.R - extracts the data from the 'posterior predictive checks' simulations to assess the degree to which the posterior accurately emulates the summary statistics of the data.
+ABC_simulation_new_PPCs.R - script for running the PPC simulations (identical to the main simulation run but with different output directory!)
+
+In addition there are some bash wrapper scripts (lesion_boost_wrapper.sh AND PPC_wrapper.sh) to allow various steps to be run as an LSF array.
 
 ## 06 Generating Figures
 Individual scripts to generate all the figures/ extended data figures from the manuscript. All the data for the figures is available from the github/ Mendeley data without having the re-run all the previous steps.
