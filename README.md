@@ -4,8 +4,15 @@ Code accompanying the manuscript 'Prolonged persistence of mutagenic DNA lesions
 # General notes
 The code is provided for all analyses starting from a mutation list with read count matrices, and a phylogeny.  The mutation calling and tree inference is not covered here and is included within the original manuscripts. \
 The numbered folders go through the different steps in the analysis, roughly in the order in which they were performed. However, (most) intermediate data is available such that each stage of the analysis can be readily performed without having to re-run earlier stages. \
+In most scripts you will need to adjust some file paths to reflect those on your own system \
+e.g. path to the cloned github repository, or the path to an available genome file (in the analyses this is GRCh37) \
 Smaller data objects are provided within the github repository. Larger data objects need to be downloaded from Mendeley Data at  doi: 10.17632/9tw3kbj2cw.1 \
 If there are any queries, feel free to contact me via email: ms56@sanger.ac.uk
+
+# System requirements
+Much of the code can be run on a standard personal computer using R v4.4.0. There are several packages used that are listed in each individual script, all of which are available either via CRAN, BioConductor, or github. Most are installed up within the scripts if not already installed.
+Some of the steps need a high performance computing (HPC) cluster as outlined below. Some of the code is designed to use an HPC cluster using the LSF system. For alternative job submission systems these will need to be altered.
+The code has been tested on linux Ubuntu 22, and Mac OS 14.5 Sonoma. No non-standard hardware is required.
 
 ## Objects that need to be downloaded from Mendeley Data
 data/input_data \
@@ -15,8 +22,11 @@ data/simulation_results/MAV_sim_results.tsv
 
 ## 01_Running the core algorithm
 This includes the core analysis script 'Detect_persistent_lesions.R' which is designed to be set off via the command line.  There are several options to point to the necessary input files, and flags to force re-analysis, remove duplicates, and to include a dummy ancestral branch (should be used if there is such a branch in the provided tree).
-The file Setting_off_persistent_lesion_analysis.sh contains the code to set off the analysis script for the different datasets in the study.
+The file Setting_off_persistent_lesion_analysis.sh contains the code to set off the analysis script for the different datasets in the study. Within this file there is an example to run the script on the 'MF' dataset (Clonal haematopoiesis phylogenies) that should be possible to run locally to test the script. This should run for all 3 individuals in <10-30 minutes.
 If trying to run on your own data you may need to edit the script to account for the format of your data.
+Smaller datasets (e.g. trees of <100-150 samples) can be run locally on a personal computer.
+
+Note that the analysis of the liver MAVs is done outside of this core script as the original samples are non-clonal and therefore much of the approach is bespoke and simplified. Therefore this is in the separate script 'Liver_MAV_analysis.R'.
 
 ## 02_Phasing and LOH analysis
 The scripts provided here show how the phasing and LOH analyses were performed.
@@ -53,10 +63,9 @@ In addition there are some bash wrapper scripts (lesion_boost_wrapper.sh AND PPC
 ## 06 Generating Figures
 Individual scripts to generate all the figures/ extended data figures from the manuscript. All the data for the figures is available from the github/ Mendeley data without having the re-run all the previous steps.
 
-
 # OTHER FOLDERS
 ## Original analysis scripts
-These are the original scripts used to analyse the data. They are not quite as 'tidy' as those within the '06_Generating_figures/' folder, and much of this is duplications of the same analyses. However, some scripts contain code for some additional plots and analyses that are not included in the manuscript and are therefore included for reference.
+These are the original scripts used to analyse the data. They are not quite as 'tidy' as those within the '06_Generating_figures/' folder, and much of this is duplications of the same analyses. However, some scripts contain code for some additional plots and statistical analyses that are not included in the manuscript and are therefore included for reference.
 
 ## Miscellaneous scripts
 
