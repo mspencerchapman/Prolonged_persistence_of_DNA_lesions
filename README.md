@@ -71,6 +71,11 @@ Individual scripts to generate all the figures/ extended data figures from the m
 These are the original scripts used to analyse the data. They are not quite as 'tidy' as those within the '06_Generating_figures/' folder, and much of this is duplications of the same analyses. However, some scripts contain code for some additional plots and statistical analyses that are not included in the manuscript and are therefore included for reference.
 
 ## Miscellaneous scripts
+Some additional miscellaneous scripts:
+Running_HDP/ - scripts for running the HDP signature extraction
+Manual_fix_for_KX003_tree.R - short script for altering the phylogeny configuration
+Bootstrap_tree_analysis_readcounts.R - script for analysing the bootstrap readcounts
+Running_IQtree_and_SCITE.R - script for setting off IQtree and SCITE phylogeny inference algorithms and comparing them to the MPBoot phylogenies.
 
 ## Plots
 This is where all plots from the figure generation scripts are saved.
