@@ -27,7 +27,7 @@ There is a core phasing script underlying this - this is run in julia and will r
 This is a single script that takes the data from the previous two stages, as well as a comprehensive list of sample metadata to generate the final set of data objects for all downstream analyses.
 
 ## 04_Simulation_scripts
-A selection of scripts that run various simulations:
+A selection of scripts that run various simulations using the phylogenies from the data as their starting point. Most are calculating the expected distributions of MAVs/ PVVs from alternative mechanisms (i.e. not from a persistent DNA lesion)
 - MAV_simulations_2.R; script to model the NULL model of multi-allelic variants occurring from independent mutation acquisition
 - PVV_simulation_2.R; script to model the NULL model of phylogeny-violating variants occurring from independent mutation acquisition
 - PVV_simulation_reversion_2.R; script to model somatic reversion events as a possible cause of phylogeny-violating variants
@@ -39,7 +39,7 @@ Note that the output from these scripts is provided in the github repo in Data/s
 All the scripts required to run the ABC - these need to be run in the correct order (as below).
 Lesion_duration_ABC_new.sh contains the commands to set off the jobs on the command line (using LSF) in the correct order.
 
-1. generate_simpops.R - each run of this script will generate a simulated population like the 40 used in the ABC. Run with the index of the simulation as a trailing argument i.e. Rscript generate_simpops.R 13
+1. generate_simpops.R - each run of this script will generate a simulated complete haematopoietic population for the ABC using the R package 'rsimpop'. 40 are generated for the ABC. Run with the index of the population as a trailing argument i.e. Rscript generate_simpops.R 13
 2. ABC_simulation_new_INTRODUCE_LESIONS.R - introduce lesions into each simulated population. This takes two trailing arguments (1) the index of the simpop to introduce lesions into and (2) the mean duration of the introduced lesions (in years).
 3. ABC_simulation_new_INTRODUCE_LESIONS_BOOST.R - a script to see if there are sufficient PVVs generated from the first run of lesion generation, and introduce additional lesions if not.
 4. ABC_simulation_new_parallel.R - script for the main simulation of the ABC. Designed to run with 4 cores with analysis for the four phylogenies running in parallelel. Each run of the simulation typically takes ~24hours.
