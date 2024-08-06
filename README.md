@@ -6,7 +6,7 @@ The code is provided for all analyses starting from a mutation list with read co
 The numbered folders go through the different steps in the analysis, roughly in the order in which they were performed. However, (most) intermediate data is available such that each stage of the analysis can be readily performed without having to re-run earlier stages. \
 In most scripts you will need to adjust some file paths to reflect those on your own system \
 e.g. path to the cloned github repository, or the path to an available genome file (in the analyses this is GRCh37) \
-Smaller data objects are provided within the github repository. Larger data objects need to be downloaded from Mendeley Data at  doi: 10.17632/9tw3kbj2cw.1 \
+Smaller data objects are provided within the github repository. Larger data objects need to be downloaded from Mendeley Data at  https://data.mendeley.com/datasets/9tw3kbj2cw/1 \
 If there are any queries, feel free to contact me via email: ms56@sanger.ac.uk
 
 # System requirements
