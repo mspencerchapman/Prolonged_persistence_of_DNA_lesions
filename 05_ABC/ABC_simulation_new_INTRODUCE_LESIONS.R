@@ -1,6 +1,9 @@
 ##Script to introduce 100,000 lesions into the different aged simpop populations
 #The population and the mean lesion duration are set outside the script
 
+#========================================#
+# Parse arguments from the command line ####
+#========================================#
 args<-commandArgs(trailingOnly = T)
 print(args)
 pop_number=as.numeric(args[1])
@@ -8,31 +11,37 @@ mean_lesion_duration_years=as.numeric(args[2])
 print(pop_number)
 print(mean_lesion_duration_years)
 
-simpop_dir="simulated_populations/"
-lesion_sim_dir="lesion_simulation_files/"
+#========================================#
+# Load packages (and install if they are not installed yet) ####
+#========================================#
+cran_packages=c("ape","remotes")
+
+for(package in cran_packages){
+  if(!require(package, character.only=T,quietly = T, warn.conflicts = F)){
+    install.packages(as.character(package),repos = "http://cran.us.r-project.org")
+    library(package, character.only=T,quietly = T, warn.conflicts = F)
+  }
+}
+
+if(!require("rsimpop", character.only=T,quietly = T, warn.conflicts = F)){
+  install_git("https://github.com/NickWilliamsSanger/rsimpop")
+  library("rsimpop",character.only=T,quietly = T, warn.conflicts = F)
+}
+options(stringsAsFactors = FALSE)
+
+#========================================#
+# Ensure directories and file paths are set ####
+#========================================#
+#Set directories
+root_dir="./" #Or else set to the repository path
+simpop_dir=paste0(root_dir,"05_ABC/simpops/")
+lesion_sim_dir=paste0(root_dir,"05_ABC/lesion_simulation_files/")
 output_file=paste0(lesion_sim_dir,"lesion_simulation_",pop_number,"_",mean_lesion_duration_years,".Rds")
+setwd(root_dir)
 
-#### Assessing accuracy of ABC framework for inferring parameters
-
-##------Outline for approach--------
-# (1) Simulate phylogenies of ageing blood
-# (2) Introduce persistent lesions of set durations (according to a gamma distribution, with varying mean)
-# (3) Visualize PVVs resulting from these and their durations
-# (4) Work back using the same ABC framework to see if we recover the correct lesion durations
-
-
-library(ape)
-library(rsimpop)
-my_working_dir=ifelse(Sys.info()['sysname']=="Darwin","~/Mounts/Lesion_Seg/ABC_new","/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/ABC_new")
-setwd(my_working_dir)
-
-##Import driver mutation parameters (from posterior of E. Mitchell et al, 2022)
-params_path=ifelse(Sys.info()['sysname']=="Darwin","~/R_work/Clonal_dynamics_of_HSCT/data/posterior_sample.txt","/lustre/scratch126/casm/team154pc/ms56/Zur_HSCT/ABC_models/ABC_Apr2022/posterior_sample.txt")
-param_posterior<-read.delim(params_path,stringsAsFactors = F)
-
-
-# Define custom functions -------------------------------------------------
-
+#========================================#
+# Define custom functions ####
+#========================================#
 #Do updated 'get_subsampled_tree' function that maintains original tip labels (needed to extract bulk clonal fractions)
 get_subsampled_tree2=function (tree, N, tips = tree$edge[c(which(tree$state == 0 & 
                                                                    tree$edge[, 2] <= length(tree$tip.label)), sample(which(tree$state != 
@@ -133,7 +142,7 @@ alt_base_prob=0.513 #taken from the data
 
 
 #How many lesions will we introduce into the phylogeny
-# - need to introduce more if the lesions are short, otherwise won't capture enough to get a distribution
+# - need to introduce more if the lesions are short (either way, will likely need to boost numbers later)
 if(mean_lesion_duration_years<=2) {
   n_lesions=5e6
 } else {

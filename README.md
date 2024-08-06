@@ -96,7 +96,7 @@ There is a core phasing script underlying this - this is run in julia and will r
 This is a single script that takes the data from the previous two stages, as well as a comprehensive list of sample metadata to generate the final set of data objects for all downstream analyses.
 
 ## 04_Simulation_scripts
-A selection of scripts that run various simulations using the phylogenies from the data as their starting point. Most are calculating the expected distributions of MAVs/ PVVs from alternative mechanisms (i.e. not from a persistent DNA lesion)
+A selection of scripts that run various simulations using the phylogenies from the data as their starting point. Most are inferring the expected distributions of MAVs/ PVVs from alternative mechanisms (i.e. not from a persistent DNA lesion)
 
 |Script name|Description|
 |-----|-------------------------------------|
@@ -130,8 +130,21 @@ In addition there are some bash wrapper scripts (lesion_boost_wrapper.sh AND PPC
 cd PATH/TO/CLONED/REPOSITORY/
 
 #Set off script to generate simulated population number 1 (it will be saved with index 1)
-#This will typically take 30-60 minutes, therefore best to do in parallel on a compute farm
+#This will typically take 30-60 minutes, and needs 32Gb RAM, therefore best to do in parallel on a compute farm
 Rscript 05_ABC/generate_simpops.R 1
+
+```
+
+### Example code for introducing lesions
+```bash
+#Go into the cloned repository, as script contains relative file paths
+cd PATH/TO/CLONED/REPOSITORY/
+
+#Set off script to introduce lesions into population 1
+#This will typically take several hours to introduce 2 million simulated lesions
+k=1 #set the population index
+i=2.1 #set the mean duration of introduced lesions (in years)
+Rscript ABC_simulation_new_INTRODUCE_LESIONS.R $k $i
 
 ```
 

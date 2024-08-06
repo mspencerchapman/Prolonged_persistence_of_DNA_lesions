@@ -14,7 +14,7 @@ OUTPUT_DIR=${STUDY_DIR}output/
 #Here is an example of running the algorithm for the 3 clonal haematopoiesis trees (which are fairly small)
 #Note that these trees do include the ancestral tip
 
-setopt shwordsplit
+setopt shwordsplit #only necessary if running using zsh on mac
 SAMPLES=$(cat ${LESION_SEG_INPUT_DIR}MF_samples.txt)
 DATASET=MF
 for EXP_ID in $SAMPLES; do
