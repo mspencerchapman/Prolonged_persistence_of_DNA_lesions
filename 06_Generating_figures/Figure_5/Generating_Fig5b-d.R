@@ -230,8 +230,8 @@ data_set="EM"
 HDP_dir=paste0(root_dir,"Data/HDP/")
 exposures_file_path=paste0(HDP_dir,data_set,"/exposures.csv")
 
-if(file.exists(exposures_file)) {
-  exposures_df<-read_csv(exposures_file)
+if(file.exists(exposures_file_path)) {
+  exposures_df<-read_csv(exposures_file_path)
 } else {
   #If the exposures file hasn't been created, can get it from the HDP output
   mut_example_multi=readRDS(paste0(HDP_folder,"/HDP_multi_chain.Rdata"))
@@ -239,7 +239,7 @@ if(file.exists(exposures_file)) {
   key_table=read.table(paste0(HDP_folder,"/key_table.txt"))
   
   exposures_df=create_exposures_df(HDP_multi = mut_example_multi,trinuc_mut_mat = mutations,key_table=key_table,sep="-")
-  write.csv(exposures_df,exposures_file,row.names = F)
+  write.csv(exposures_df,exposures_file_path,row.names = F)
 }
 
 tree=read.tree(get_file_paths_and_project(dataset="EM",Sample_ID = "PX001_2_01",input_data_dir = lesion_seg_input_dir)$tree_file_path)
@@ -283,8 +283,8 @@ ggsave(p.ls.1,filename=paste0(plots_dir,"Fig5b.pdf"),width=2,height=2)
 data_set="KY"
 exposures_file_path=paste0(HDP_dir,data_set,"/exposures.csv")
 
-if(file.exists(exposures_file)) {
-  exposures_df<-read_csv(exposures_file)
+if(file.exists(exposures_file_path)) {
+  exposures_df<-read_csv(exposures_file_path)
 } else {
   #If the exposures file hasn't been created, can get it from the HDP output
   mut_example_multi=readRDS(paste0(HDP_folder,"/HDP_multi_chain.Rdata"))
@@ -292,7 +292,7 @@ if(file.exists(exposures_file)) {
   key_table=read.table(paste0(HDP_folder,"/key_table.txt"))
   
   exposures_df=create_exposures_df(HDP_multi = mut_example_multi,trinuc_mut_mat = mutations,key_table=key_table,sep="-")
-  write.csv(exposures_df,exposures_file,row.names = F)
+  write.csv(exposures_df,exposures_file_path,row.names = F)
 }
 
 #APOBEC is N3
