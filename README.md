@@ -25,7 +25,7 @@ Data/simulation_results/MAV_sim_results.tsv
 ## 01_Running the core algorithm
 This includes the core analysis script 'Detect_persistent_lesions.R' which is designed to be set off via the command line.  There are several options to point to the necessary input files, and flags to force re-analysis, remove duplicates, and to include a dummy ancestral branch (should be used if there is such a branch in the provided tree).
 
-The file Setting_off_persistent_lesion_analysis.sh contains the code to set off the analysis script on an LSF compute farm for the different datasets in the study, including information for approximately the amount of memory required for each dataset. <strong>Copy and paste the lines individually rather than run the whole script.<strong> \
+The file Setting_off_persistent_lesion_analysis.sh contains the code to set off the analysis script on an LSF compute farm for the different datasets in the study, including information for approximately the amount of memory required for each dataset. <strong>Copy and paste the lines individually rather than run the whole script.</strong> \
 A the top of this script, there is also a 'for loop' to set of the script locally to analyse the 3 clonal haematopoiesis individuals, as this can be done in a short space of time using the resources available on most personal laptop/ desktop computers. Note that the data/input_data directory must be downloaded from Mendeley Data for this to run.
 
 If trying to run on your own data you may need to edit the script to account for the format of your data.
