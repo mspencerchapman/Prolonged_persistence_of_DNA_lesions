@@ -1,7 +1,7 @@
 #========================================#
 # Load packages (and install if they are not installed yet) ####
 #========================================#
-cran_packages=c("stringr","ape","seqinr","tidyr","dplyr","ggplot2","phangorn","optparse","parallel","MASS")
+cran_packages=c("stringr","ape","seqinr","tidyr","dplyr","ggplot2","phangorn","optparse","parallel","MASS","VGAM","remotes","dichromat")
 bioconductor_packages=c("GenomicRanges","IRanges","Rsamtools")
 
 for(package in cran_packages){

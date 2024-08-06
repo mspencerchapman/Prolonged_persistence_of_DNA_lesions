@@ -1,14 +1,40 @@
 n<-commandArgs(trailingOnly=T)
 print(n)
-library(ape)
-library(rsimpop)
+
+#========================================#
+# Load packages (and install if they are not installed yet) ####
+#========================================#
+cran_packages=c("ape","remotes")
+
+for(package in cran_packages){
+  if(!require(package, character.only=T,quietly = T, warn.conflicts = F)){
+    install.packages(as.character(package),repos = "http://cran.us.r-project.org")
+    library(package, character.only=T,quietly = T, warn.conflicts = F)
+  }
+}
+
+if(!require("rsimpop", character.only=T,quietly = T, warn.conflicts = F)){
+  install_git("https://github.com/NickWilliamsSanger/rsimpop")
+  library("rsimpop",character.only=T,quietly = T, warn.conflicts = F)
+}
+options(stringsAsFactors = FALSE)
+
+#========================================#
+# Read parameters and ensure directories are set ####
+#========================================#
+
+#Set directories
+root_dir="./" #Or else set to the repository path
+simpop_dir=paste0(root_dir,"05_ABC/simpops/")
+system(paste0("mkdir -p ",simpop_dir))
 
 ##Import driver mutation parameters (from posterior of E. Mitchell et al, 2022)
-params_path=ifelse(Sys.info()['sysname']=="Darwin","~/R_work/Clonal_dynamics_of_HSCT/data/posterior_sample.txt","/lustre/scratch126/casm/team154pc/ms56/Zur_HSCT/ABC_models/ABC_Apr2022/posterior_sample.txt")
+params_path=paste0(root_dir,"Data/reference_files/ABC_parameters/driver_parameter_posterior_sample.txt")
 param_posterior<-read.delim(params_path,stringsAsFactors = F)
 
-simpop_dir="/lustre/scratch126/casm/team154pc/ms56/lesion_segregation/ABC_new/simulated_populations/"
-system(paste0("mkdir -p ",simpop_dir))
+#========================================#
+# Set all the parameters for the simulation ####
+#========================================#
 
 age=75 #Set age to run to
 HSC_pop_size=1e5
@@ -25,7 +51,7 @@ genGammaFitness=function(fitness_threshold,shape,rate){
 }
 fitnessGammaFn=genGammaFitness(fitness_threshold=fitness_threshold,shape = gamma_shape, rate=gamma_rate)
 
-##Put parameters into a single list (to save later)
+##Put parameters into a single list (to save later if desired)
 params=list(age=age,
             HSC_symmetric_division_rate=HSC_symmetric_division_rate,
             HSC_pop_size=HSC_pop_size,
@@ -33,6 +59,10 @@ params=list(age=age,
             gamma_shape=gamma_shape,
             gamma_rate=gamma_rate,
             fitness_threshold=fitness_threshold)
+
+#========================================#
+# Run the simulation ####
+#========================================#
 
 pop_final=run_driver_process_sim(initial_division_rate=0.1,
                                  final_division_rate = HSC_symmetric_division_rate,
